@@ -329,7 +329,6 @@
         </div>
       </div>
     </div>
-    </div>
 
     <div class="grid-1">
       <div class="card">
@@ -836,8 +835,8 @@ function updateDashboard() {
 
   if (activeTab === 'p4') {
     const ageKeys = Object.keys(AGE_POP);
-    let mAge = ageKeys.map(a => filtered.filter(d=>d['성별']==='남자' && String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').includes(a.replace(/\s+/g,'').replace('세',''))).length);
-    let fAge = ageKeys.map(a => filtered.filter(d=>d['성별']==='여자' && String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').includes(a.replace(/\s+/g,'').replace('세',''))).length);
+    let mAge = ageKeys.map(a => filtered.filter(d=>d['성별']==='남자' && String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-').includes(a.replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-'))).length);
+    let fAge = ageKeys.map(a => filtered.filter(d=>d['성별']==='여자' && String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-').includes(a.replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-'))).length);
     
     initChart('c4_butterfly', {
       type: 'bar',
@@ -861,7 +860,7 @@ function updateDashboard() {
     
     let lcTop3PerGrp = {};
     lcKeys.forEach(grp => {
-        let grpFiltered = filtered.filter(d => lcMap[grp].some(a => String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').includes(a.replace(/\s+/g,'').replace('세',''))));
+        let grpFiltered = filtered.filter(d => lcMap[grp].some(a => String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-').includes(a.replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-'))));
         let t3 = getTopN(grpFiltered, 3);
         lcTop3PerGrp[grp] = t3.map(x=>x[0]);
     });
@@ -870,7 +869,7 @@ function updateDashboard() {
     let c4LcDatasets = uniqueLcTop3.map(nm => {
         let counts = lcKeys.map(grp => {
             if(lcTop3PerGrp[grp].includes(nm)) {
-                return filtered.filter(d => processName(d['감염병명'])===nm && lcMap[grp].some(a => String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').includes(a.replace(/\s+/g,'').replace('세','')))).length;
+                return filtered.filter(d => processName(d['감염병명'])===nm && lcMap[grp].some(a => String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-').includes(a.replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-')))).length;
             } else return 0;
         });
         return { label: nm, data: counts, backgroundColor: window.getGlobalColor(nm) };
