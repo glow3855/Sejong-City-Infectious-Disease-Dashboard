@@ -346,20 +346,19 @@
 
     <div class="grid-2">
       <div class="card">
-        <h3>성별·연령별 발생분포 (건수)</h3>
-        <!-- PDF (Page 10): 막대폭 줄이고 끝을 둥글게 -->
-        <div class="chart-wrap h400"><canvas id="c4_butterfly"></canvas></div>
+        <h3>연령대별 발생률 (인구 10만명당)</h3>
+        <div class="chart-wrap h400"><canvas id="c4_age_rate"></canvas></div>
       </div>
       <div class="card">
-        <h3>생애주기별 다빈도 감염병 (TOP 3)</h3>
-        <div class="chart-wrap h400"><canvas id="c4_lifecycle"></canvas></div>
+        <h3>성별·연령별 발생분포 (건수)</h3>
+        <div class="chart-wrap h400"><canvas id="c4_butterfly"></canvas></div>
       </div>
     </div>
 
     <div class="grid-1">
       <div class="card">
-        <h3>연령대별 발생률 (인구 10만명당)</h3>
-        <div class="chart-wrap"><canvas id="c4_age_rate"></canvas></div>
+        <h3>생애주기별 다빈도 감염병 (TOP 3)</h3>
+        <div class="chart-wrap"><canvas id="c4_lifecycle"></canvas></div>
       </div>
     </div>
   </div>
@@ -896,7 +895,7 @@ function updateDashboard() {
   }
 
   if (activeTab === 'p5') {
-    const dGrp = filtered.reduce((acc, d) => { const n=processName(d['감염병명']); if(!acc[n]) acc[n]=d['질병급']+'급'; return acc; }, {});
+    const dGrp = baseData.reduce((acc, d) => { const n=processName(d['감염병명']); if(!acc[n]) acc[n]=d['질병급']+'급'; return acc; }, {});
     const dList = Object.keys(dGrp).sort();
     let tb = '<thead><tr><th>질병급</th><th>감염병명</th><th>건수</th></tr></thead><tbody>';
     dList.forEach(n => {
@@ -916,6 +915,26 @@ window.renderC5 = function(name) {
   initChart('c5_trend', {
     type: 'line', data: { labels: years, datasets: [{label:name+' 건수', data:years.map(y=>yearGrp[y]||0), borderColor:PALETTE[0], backgroundColor:PALETTE[0]+'33', fill:true, tension:0.3, pointRadius:4}] },
     options: { responsive:true, maintainAspectRatio:false, plugins:{datalabels:{display:false}}, scales:{x:{grid:{display:false}}, y:{grid:{color:GRID_COLOR}, beginAtZero:true}} }
+  });
+
+  const mths = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const allYears = [...new Set(baseData.map(d=>d['신고일_yy']))].sort();
+  const targetYears = allYears.slice(-3);
+  let c5Datasets = targetYears.map((yr, idx) => {
+    let mData = mths.map((_, i) => dOnly.filter(d => d['신고일_yy']===yr && parseInt(d['신고일_mm'])===(i+1)).length);
+    return {
+      label: yr + '년',
+      data: mData,
+      borderColor: PALETTE[idx % PALETTE.length],
+      backgroundColor: PALETTE[idx % PALETTE.length],
+      tension: 0.3,
+      fill: false
+    };
+  });
+  initChart('c5_month', {
+    type: 'line',
+    data: { labels: mths, datasets: c5Datasets },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{datalabels:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:GRID_COLOR}}, x:{grid:{display:false}}} }
   });
 };
 
