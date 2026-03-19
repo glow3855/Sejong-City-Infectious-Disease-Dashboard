@@ -804,7 +804,7 @@ function updateDashboard() {
             window.c3_map_instance.setOption({
                 tooltip: { trigger: 'item', formatter: (p) => p.data ? `${p.data.shortName}<br/>발생률: ${p.data.rate}명 (10만명당)<br/>신고건수: ${p.data.cnt}건` : p.name },
                 visualMap: { min: 0, max: maxVal, text: [window.p3_viewMode==='rate' ? '발생률(명)' : '신고건수(건)', '0'], realtime: false, calculable: true, inRange: { color: ['#f8fafc', '#93c5fd', '#3b82f6', '#1d4ed8'] }, bottom: 20, left: 10 },
-                series: [{ type: 'map', map: 'sejong',  roam: false, label: { show: true, fontSize: 10, formatter: (p) => p.name.replace('세종특별자치시 ', '') }, data: mapData }]
+                series: [{ type: 'map', map: 'sejong',  roam: false, label: { show: true, fontSize: 10, formatter: (p) => p.name.replace('세종특별자치시 ', '').replace('세종시 ', '') }, data: mapData }]
             }, true);
             
             window.c3_map_instance.resize();
@@ -834,9 +834,20 @@ function updateDashboard() {
   }
 
   if (activeTab === 'p4') {
-    const ageKeys = Object.keys(AGE_POP);
-    let mAge = ageKeys.map(a => filtered.filter(d=>d['성별']==='남자' && String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-').includes(a.replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-'))).length);
-    let fAge = ageKeys.map(a => filtered.filter(d=>d['성별']==='여자' && String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-').includes(a.replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-'))).length);
+    const ageGroup10 = {
+        '0~9세': ['0-4세', '5-9세', '0-9세'],
+        '10~19세': ['10-14세', '15-19세', '10-19세'],
+        '20~29세': ['20-29세'],
+        '30~39세': ['30-39세'],
+        '40~49세': ['40-49세'],
+        '50~59세': ['50-59세'],
+        '60~69세': ['60-69세'],
+        '70~79세': ['70-79세'],
+        '80세이상': ['80세이상', '80이상']
+    };
+    const ageKeys = Object.keys(ageGroup10);
+    let mAge = ageKeys.map(a => filtered.filter(d=>d['성별']==='남자' && ageGroup10[a].some(subA => String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-').includes(subA.replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-')))).length);
+    let fAge = ageKeys.map(a => filtered.filter(d=>d['성별']==='여자' && ageGroup10[a].some(subA => String(d['연령대5']||'').replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-').includes(subA.replace(/\s+/g,'').replace('세','').replace('~','-').replace('ㅡ','-')))).length);
     
     initChart('c4_butterfly', {
       type: 'bar',
@@ -844,7 +855,10 @@ function updateDashboard() {
       options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: {position:'top'}, datalabels:{display:false}, tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${Math.abs(c.raw)}건`}} }, scales: {x:{grid:{color:GRID_COLOR}, ticks:{callback:v=>Math.abs(v)}}, y:{grid:{display:false}}} }
     });
 
-    const rates = ageKeys.map((a,i) => (((mAge[i]+fAge[i]) / AGE_POP[a]) * 100000).toFixed(1));
+    const rates = ageKeys.map((a,i) => {
+        let pop = ageGroup10[a].reduce((sum, sub) => sum + (AGE_POP[sub] || 0), 0);
+        return (((mAge[i]+fAge[i]) / (pop || 1)) * 100000).toFixed(1);
+    });
     initChart('c4_age_rate', {
       type: 'bar', data: { labels: ageKeys, datasets: [{label:'발생률', data:rates, backgroundColor:PALETTE[0], borderRadius:4, barThickness:30}] },
       options: { responsive:true, maintainAspectRatio:false, plugins:{datalabels:{display:false},legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{grid:{color:GRID_COLOR}}} }
