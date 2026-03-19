@@ -212,7 +212,7 @@
 <div class="content">
   <!-- ==================== P1. 주요발생현황 ==================== -->
   <div id="p1" class="page active">
-    <div class="page-header"><h2 class="page-title">주요 발생현황 (2026년 누적 / 3월 기준)</h2></div>
+    <div class="page-header"><h2 class="page-title" id="p1_main_title">주요 발생현황 (2026년 누적 / 3월 기준)</h2></div>
     
     <div class="grid-2">
       <!-- Card 1: 신고건수 -->
@@ -256,12 +256,12 @@
 
     <div class="grid-2">
       <div class="card">
-        <h3>2026년 누적 주요 감염병 TOP 5</h3>
+        <h3 id="p1_top5_title">2026년 누적 주요 감염병 TOP 5</h3>
         <!-- PDF: 수직/세로형 막대그래프 내림차순. -->
         <div class="chart-wrap"><canvas id="c1_top5"></canvas></div>
       </div>
       <div class="card">
-        <h3>2026년 누적 전국/세종 구성비 비교</h3>
+        <h3 id="p1_comp_title">2026년 누적 전국/세종 구성비 비교</h3>
         <!-- PDF: 누적 막대그래프 -->
         <div class="chart-wrap"><canvas id="c1_comp"></canvas></div>
       </div>
@@ -490,6 +490,16 @@ function updateDashboard() {
   const f_disease = document.getElementById('f_disease').value;
   const mStr = f_month.replace('월','');
 
+  // 동적 타이틀 업데이트 (p1)
+  const tyLabel = f_year === '전체' ? '전체 기간 누적' : `${f_year}년 누적`;
+  const tmLabel = f_month === '전체' ? '' : ` / ${f_month} 기준`;
+  const elMain = document.getElementById('p1_main_title');
+  if(elMain) elMain.innerText = `주요 발생현황 (${tyLabel}${tmLabel})`;
+  const elTop5 = document.getElementById('p1_top5_title');
+  if(elTop5) elTop5.innerText = `${tyLabel} 주요 감염병 TOP 5`;
+  const elComp = document.getElementById('p1_comp_title');
+  if(elComp) elComp.innerText = `${tyLabel} 전국/세종 구성비 비교`;
+
   // 가장 최근 데이터 연월 파악 (데이터 기준 표기용)
   const allYears = [...new Set(rawData.map(d=>d['신고일_yy']).filter(Boolean))].sort().reverse();
   const latestYear = allYears[0] || new Date().getFullYear().toString();
@@ -602,8 +612,8 @@ function updateDashboard() {
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend:{display:false}, datalabels:{align:'end', anchor:'end', color:'#0f172a', font:{weight:'bold'}} }, scales: {x:{grid:{display:false}}, y:{grid:{color:GRID_COLOR}, beginAtZero:true}} }
     });
 
-    // For c1_comp, we want Sejong bar to match the static National data for 2026 (ignoring year and monthly filters)
-    let ycSj = baseData.filter(d => d['신고일_yy'] === '2026');
+    // For c1_comp, we apply the year filter so the chart matches the dynamically updated year title
+    let ycSj = baseData.filter(d => f_year === '전체' ? true : d['신고일_yy'] === f_year);
     
     // Fallback if ycSj is empty, use baseData entirely
     if(ycSj.length === 0) ycSj = baseData;
