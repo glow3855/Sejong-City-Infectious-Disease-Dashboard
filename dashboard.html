@@ -603,11 +603,11 @@ function updateDashboard() {
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend:{display:false}, datalabels:{align:'end', anchor:'end', color:'#0f172a', font:{weight:'bold'}} }, scales: {x:{grid:{display:false}}, y:{grid:{color:GRID_COLOR}, beginAtZero:true}} }
     });
 
-            // For c1_comp, we want Sejong bar to perfectly match the 5-year chart's bar for the selected year (ignoring monthly filters)
-    let ycSj = baseData.filter(d => d['신고일_yy'] === ty);
+    // For c1_comp, we want Sejong bar to match the static National data for 2026 (ignoring year and monthly filters)
+    let ycSj = baseData.filter(d => d['신고일_yy'] === '2026');
     
-    // Fallback if ycSj is empty, use timeFiltered
-    if(ycSj.length === 0) ycSj = timeFiltered;
+    // Fallback if ycSj is empty, use baseData entirely
+    if(ycSj.length === 0) ycSj = baseData;
     
     let sejongTop5 = getTopN(ycSj, 5);
     
