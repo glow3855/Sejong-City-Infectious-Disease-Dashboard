@@ -1212,7 +1212,7 @@
           options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => { const yr = c[0].dataset.label; return yr ? `${yr}년 ${c[0].label}` : c[0].label; }, label: (ctx) => `${ctx.dataset.label}년: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
         });
 
-        const top5 = getTopN(rawData, 5).map(x => x[0]);
+        const top5 = getTopN(baseData, 5).map(x => x[0]);
         initChart('c2_top5_line', {
           type: 'line',
           data: {
@@ -1462,7 +1462,11 @@
     }
 
     window.renderC5 = function (name) {
-      const dOnly = rawData.filter(d => processName(d['감염병명']) === name);
+      // Apply grade filter (P5 has grade filter); c5_trend shows full historical trend regardless of year
+      const gradeBase = filterState.grade !== '전체'
+        ? rawData.filter(d => d['질병급'] === filterState.grade.replace('급', ''))
+        : rawData;
+      const dOnly = gradeBase.filter(d => processName(d['감염병명']) === name);
       const yearGrp = dOnly.reduce((acc, d) => { acc[d['신고일_yy']] = (acc[d['신고일_yy']] || 0) + 1; return acc; }, {});
       const years = Object.keys(yearGrp).sort().slice(-7);
       initChart('c5_trend', {
@@ -1471,8 +1475,9 @@
       });
 
       const mths = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-      const allYears = [...new Set(baseData.map(d => d['신고일_yy']))].sort();
-      const targetYears = allYears.slice(-3);
+      const allYears = [...new Set(rawData.map(d => d['신고일_yy']))].sort();
+      // If year filter is set, show only that year; otherwise show last 3 years
+      const targetYears = filterState.year !== '전체' ? [filterState.year] : allYears.slice(-3);
       let c5Datasets = targetYears.map((yr, idx) => {
         let mData = mths.map((_, i) => dOnly.filter(d => d['신고일_yy'] === yr && parseInt(d['신고일_mm']) === (i + 1)).length);
         return {
