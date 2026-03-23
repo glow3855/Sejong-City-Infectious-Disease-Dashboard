@@ -606,8 +606,10 @@
       </div>
 
       <div class="grid-map-fixed">
-        <div class="card" style="display:flex; flex-direction:column; gap:10px;">
-          <h3 style="margin-bottom:0; font-size:16px; font-weight:700;">2026년 누적 읍면동별 발생지도</h3>
+        <div class="card" style="display:flex; flex-direction:column;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <h3 style="margin-bottom:0; font-size:16px; font-weight:700;">2026년 누적 읍면동별 발생지도</h3>
+          </div>
           <div class="chart-wrap" style="flex-grow:0; height:500px; aspect-ratio:auto;">
             <div id="c3_map" style="width:100%;height:100%;"></div>
           </div>
@@ -1211,20 +1213,21 @@
                 min: 0, 
                 max: maxVal, 
                 orient: 'horizontal',
-                text: [window.p3_viewMode === 'rate' ? '발생률(명)' : '신고건수(건)', '0'], 
+                text: [window.p3_viewMode === 'rate' ? '발생률(명)' : '신고건수(건)', ''], 
                 realtime: false, 
                 calculable: true, 
                 inRange: { color: ['#f8fafc', '#93c5fd', '#3b82f6', '#1d4ed8'] }, 
-                top: -5, 
-                right: 15,
+                top: 0, 
+                right: 0,
                 itemWidth: 12,
-                itemHeight: 120
+                itemHeight: 140
               },
               series: [{ 
                 type: 'map', 
                 map: 'sejong', 
                 roam: false, 
-                zoom: 1.2,
+                zoom: 1.5,
+                top: 60,
                 label: { 
                   show: true, 
                   fontSize: 10, 
