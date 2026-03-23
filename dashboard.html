@@ -83,16 +83,17 @@
     }
 
     /* Filters Component */
-    .filters {
-      background: #fff;
-      padding: 16px 40px;
+    .tab-filters {
       display: flex;
       gap: 16px;
       align-items: center;
       flex-wrap: wrap;
-      border-bottom: 1px solid #e2e8f0;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-      margin-bottom: 24px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
     .filter-group {
@@ -479,32 +480,6 @@
     <div class="date-badge" id="data_date_badge">데이터 기준: </div>
   </div>
 
-  <!-- 상단 공통 필터 (1개로 통합) -->
-  <div class="filters">
-    <div class="filter-group">
-      <label>연도</label>
-      <select id="f_year"></select>
-    </div>
-    <div class="filter-group">
-      <label>월별</label>
-      <select id="f_month">
-        <option value="전체">전체</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>질병급</label>
-      <select id="f_grade">
-        <option value="전체">전체</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>감염병명</label>
-      <select id="f_disease">
-        <option value="전체">전체</option>
-      </select>
-    </div>
-  </div>
-
   <!-- Tabs -->
   <div class="tabs">
     <div class="tab active" data-target="p1">주요발생현황</div>
@@ -517,6 +492,12 @@
   <div class="content">
     <!-- ==================== P1. 주요발생현황 ==================== -->
     <div id="p1" class="page active">
+      <div class="tab-filters">
+        <div class="filter-group"><label>연도</label><select class="tab-filter" data-key="year"></select></div>
+        <div class="filter-group"><label>월별</label><select class="tab-filter" data-key="month"></select></div>
+        <div class="filter-group"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
+        <div class="filter-group"><label>감염병명</label><select class="tab-filter" data-key="disease"></select></div>
+      </div>
       <div class="page-header">
         <h2 class="page-title" id="p1_main_title">주요 발생현황 (2026년 누적 / 3월 기준)</h2>
       </div>
@@ -583,6 +564,12 @@
 
     <!-- ==================== P2. 연도별·월별 ==================== -->
     <div id="p2" class="page">
+      <div class="tab-filters">
+        <div class="filter-group"><label>연도</label><select class="tab-filter" data-key="year"></select></div>
+        <div class="filter-group"><label>월별</label><select class="tab-filter" data-key="month"></select></div>
+        <div class="filter-group"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
+        <div class="filter-group"><label>감염병명</label><select class="tab-filter" data-key="disease"></select></div>
+      </div>
       <div class="page-header">
         <h2 class="page-title">연도별·월별 발생현황</h2>
       </div>
@@ -622,6 +609,10 @@
 
     <!-- ==================== P3. 읍면동별 ==================== -->
     <div id="p3" class="page">
+      <div class="tab-filters">
+        <div class="filter-group"><label>연도</label><select class="tab-filter" data-key="year"></select></div>
+        <div class="filter-group"><label>월별</label><select class="tab-filter" data-key="month"></select></div>
+      </div>
       <div class="page-header">
         <h2 class="page-title">읍면동별 발생현황</h2>
       </div>
@@ -666,6 +657,12 @@
 
     <!-- ==================== P4. 인구집단별 ==================== -->
     <div id="p4" class="page">
+      <div class="tab-filters">
+        <div class="filter-group"><label>연도</label><select class="tab-filter" data-key="year"></select></div>
+        <div class="filter-group"><label>월별</label><select class="tab-filter" data-key="month"></select></div>
+        <div class="filter-group"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
+        <div class="filter-group"><label>감염병명</label><select class="tab-filter" data-key="disease"></select></div>
+      </div>
       <div class="page-header">
         <h2 class="page-title">인구집단별 발생현황</h2>
       </div>
@@ -707,6 +704,10 @@
 
     <!-- ==================== P5. 감염병별 ==================== -->
     <div id="p5" class="page">
+      <div class="tab-filters">
+        <div class="filter-group"><label>연도</label><select class="tab-filter" data-key="year"></select></div>
+        <div class="filter-group"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
+      </div>
       <div class="page-header">
         <h2 class="page-title">감염병별 발생현황</h2>
       </div>
@@ -845,6 +846,16 @@
     };
     const KR_RATE = { '0-4세': 150, '5-9세': 540, '10-14세': 480, '15-19세': 280, '20-29세': 100, '30-39세': 90, '40-49세': 115, '50-59세': 140, '60-69세': 130, '70-79세': 95, '80세이상': 80 };
 
+    // 전역 필터 상태
+    const filterState = { year: '전체', month: '전체', grade: '전체', disease: '전체' };
+
+    function syncFilterUI() {
+      document.querySelectorAll('.tab-filter[data-key="year"]').forEach(el => el.value = filterState.year);
+      document.querySelectorAll('.tab-filter[data-key="month"]').forEach(el => el.value = filterState.month);
+      document.querySelectorAll('.tab-filter[data-key="grade"]').forEach(el => el.value = filterState.grade);
+      document.querySelectorAll('.tab-filter[data-key="disease"]').forEach(el => el.value = filterState.disease);
+    }
+
     // 탭 핸들러
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -852,7 +863,8 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(tab.dataset.target).classList.add('active');
-        updateDashboard(); // Re-render for the active tab to fix sizing issues
+        syncFilterUI();
+        updateDashboard();
       });
     });
 
@@ -986,10 +998,10 @@
     };
 
     function updateDashboard() {
-      const f_year = document.getElementById('f_year').value;
-      const f_month = document.getElementById('f_month').value;
-      const f_grade = document.getElementById('f_grade').value;
-      const f_disease = document.getElementById('f_disease').value;
+      const f_year = filterState.year;
+      const f_month = filterState.month;
+      const f_grade = filterState.grade;
+      const f_disease = filterState.disease;
       const mStr = f_month.replace('월', '');
 
       // 동적 타이틀 업데이트 (p1)
@@ -1312,7 +1324,7 @@
         }, 50);
 
         // Heatmap logic kept identical
-        const p3_data = document.getElementById('f_year').value !== '전체' ? baseData.filter(d => d['신고일_yy'] === document.getElementById('f_year').value) : baseData;
+        const p3_data = filterState.year !== '전체' ? baseData.filter(d => d['신고일_yy'] === filterState.year) : baseData;
         const mths = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
         const hmSortedE = Object.keys(emdbGrp).filter(e => e !== '기타').sort((a, b) => emdbGrp[b] - emdbGrp[a]);
         let ht = '<thead><tr><th>읍면동</th>'; mths.forEach(m => ht += `<th>${m}</th>`); ht += '<th>합계</th></tr></thead><tbody>';
@@ -1495,30 +1507,30 @@
       const grades = [...new Set(rawData.map(d => d['질병급']).filter(Boolean))].sort();
       const diseases = [...new Set(rawData.map(d => processName(d['감염병명'])).filter(Boolean))].sort();
 
-      const selY = document.getElementById('f_year');
-      selY.innerHTML = years.map(y => `<option value="${y}">${y}년</option>`).join('');
+      const yearOpts = years.map(y => `<option value="${y}">${y}년</option>`).join('');
+      const monthOpts = '<option value="전체">전체 (월별)</option>' + months.map(m => `<option value="${m}월">${m}월</option>`).join('');
+      const gradeOpts = '<option value="전체">전체 (질병급)</option>' + grades.map(g => `<option value="${g}급">${g}급</option>`).join('');
+      const diseaseOpts = '<option value="전체">전체 (병명)</option>' + diseases.map(d => `<option value="${d}">${d}</option>`).join('');
 
-      const selM = document.getElementById('f_month');
-      selM.innerHTML = '<option value="전체">전체 (월별)</option>' + months.map(m => `<option value="${m}월">${m}월</option>`).join('');
+      document.querySelectorAll('.tab-filter[data-key="year"]').forEach(el => el.innerHTML = yearOpts);
+      document.querySelectorAll('.tab-filter[data-key="month"]').forEach(el => el.innerHTML = monthOpts);
+      document.querySelectorAll('.tab-filter[data-key="grade"]').forEach(el => el.innerHTML = gradeOpts);
+      document.querySelectorAll('.tab-filter[data-key="disease"]').forEach(el => el.innerHTML = diseaseOpts);
 
+      // 초기값: 최신 연도 + 최신 월
       if (years.length > 0) {
-        selY.value = years[0]; // 최신 연도
-        const latestD = rawData.filter(d => d['신고일_yy'] === years[0]);
-        const latestM = [...new Set(latestD.map(d => d['신고일_mm']).filter(Boolean))].map(m => parseInt(m)).sort((a, b) => b - a);
-        if (latestM.length > 0) selM.value = latestM[0] + "월"; // 가장 최근 월 자동 선택
-        else selM.value = "전체";
+        filterState.year = years[0];
+        const latestM = [...new Set(rawData.filter(d => d['신고일_yy'] === years[0]).map(d => d['신고일_mm']).filter(Boolean))].map(m => parseInt(m)).sort((a, b) => b - a);
+        filterState.month = latestM.length > 0 ? latestM[0] + '월' : '전체';
       }
+      syncFilterUI();
 
-      const selG = document.getElementById('f_grade');
-      selG.innerHTML = '<option value="전체">전체 (질병급)</option>' + grades.map(g => `<option value="${g}급">${g}급</option>`).join('');
-      selG.value = "전체";
-
-      const selD = document.getElementById('f_disease');
-      selD.innerHTML = '<option value="전체">전체 (병명)</option>' + diseases.map(d => `<option value="${d}">${d}</option>`).join('');
-      selD.value = "전체";
-
-      ['f_year', 'f_month', 'f_grade', 'f_disease'].forEach(id => {
-        document.getElementById(id).addEventListener('change', updateDashboard);
+      document.addEventListener('change', e => {
+        if (e.target.classList.contains('tab-filter')) {
+          filterState[e.target.dataset.key] = e.target.value;
+          syncFilterUI();
+          updateDashboard();
+        }
       });
       updateDashboard();
     });
