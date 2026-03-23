@@ -2,13 +2,11 @@
 <html lang="ko">
 
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>세종시 감염병 현황 대시보드 (프로토타입)</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -867,10 +865,99 @@
       charts[id] = new Chart(ctx, config);
     }
 
+    function renderMapSVG(mapData) {
+      const container = document.getElementById('c3_map');
+      if (!container || !sejongGeoJson) return;
+
+      const dataMap = {};
+      mapData.forEach(d => { dataMap[d.name] = d; });
+
+      let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
+      sejongGeoJson.features.forEach(f => {
+        const rings = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates.flat(1) : f.geometry.coordinates;
+        rings.forEach(ring => ring.forEach(([lng, lat]) => {
+          if (lng < minLng) minLng = lng;
+          if (lng > maxLng) maxLng = lng;
+          if (lat < minLat) minLat = lat;
+          if (lat > maxLat) maxLat = lat;
+        }));
+      });
+
+      const W = 480, H = 480, pad = 16;
+      const scale = Math.min((W - 2*pad) / (maxLng - minLng), (H - 2*pad) / (maxLat - minLat));
+      const ox = (W - (maxLng - minLng) * scale) / 2;
+      const oy = (H - (maxLat - minLat) * scale) / 2;
+      const proj = ([lng, lat]) => [ox + (lng - minLng) * scale, H - oy - (lat - minLat) * scale];
+
+      let maxVal = Math.max(...mapData.map(d => d.value), 1);
+      const getColor = v => {
+        if (!v || v === 0) return '#f8fafc';
+        const r = v / maxVal;
+        if (r < 0.25) return '#dbeafe';
+        if (r < 0.5) return '#93c5fd';
+        if (r < 0.75) return '#3b82f6';
+        return '#1d4ed8';
+      };
+
+      let paths = '', lbls = '';
+      sejongGeoJson.features.forEach(f => {
+        const sn = (f.properties.adm_nm || '').replace('세종특별자치시 ', '');
+        const fn = '세종시 ' + sn;
+        const d = dataMap[fn];
+        const color = getColor(d ? d.value : 0);
+        const rings = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates.flat(1) : f.geometry.coordinates;
+        let allPts = [], pd = '';
+        rings.forEach(ring => {
+          const pts = ring.map(proj);
+          allPts = allPts.concat(pts);
+          pd += pts.map((p, i) => `${i===0?'M':'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join('') + 'Z';
+        });
+        const cx = (allPts.reduce((s,p)=>s+p[0],0)/allPts.length).toFixed(1);
+        const cy = (allPts.reduce((s,p)=>s+p[1],0)/allPts.length).toFixed(1);
+        paths += `<path d="${pd}" fill="${color}" stroke="#fff" stroke-width="0.8" class="map-rgn" data-name="${sn}" data-rate="${d?d.rate:'-'}" data-cnt="${d?d.cnt:0}"/>`;
+        lbls  += `<text x="${cx}" y="${cy}" font-size="7.5" fill="#334155" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${sn}</text>`;
+      });
+
+      container.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"><g>${paths}</g><g>${lbls}</g></svg>`;
+
+      let tip = document.getElementById('map_tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'map_tooltip';
+        tip.style.cssText = 'position:fixed;background:rgba(255,255,255,0.97);border-radius:8px;padding:10px 14px;font-size:13px;pointer-events:none;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.12);z-index:9999;border:1px solid #e2e8f0;min-width:140px;';
+        document.body.appendChild(tip);
+      }
+      container.querySelectorAll('.map-rgn').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          tip.innerHTML = `<div style="font-weight:700;border-bottom:1px solid #e2e8f0;padding-bottom:4px;margin-bottom:4px;">${el.dataset.name}</div>발생률: <strong style="color:#2563eb;">${el.dataset.rate}명</strong><br/>신고건수: <strong>${el.dataset.cnt}건</strong>`;
+          tip.style.display = 'block';
+        });
+        el.addEventListener('mousemove', e => { tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-10)+'px'; });
+        el.addEventListener('mouseleave', () => { tip.style.display='none'; });
+      });
+
+      const legendWrap = document.getElementById('c3_map_legend');
+      if (legendWrap) {
+        const unit = window.p3_viewMode === 'rate' ? '명' : '건';
+        const stops = [['#f8fafc','0'],['#dbeafe',Math.ceil(maxVal*0.25)],['#93c5fd',Math.ceil(maxVal*0.5)],['#3b82f6',Math.ceil(maxVal*0.75)],['#1d4ed8',Math.ceil(maxVal)+'+']];
+        let html = `<span style="margin-right:8px;font-weight:700;color:#64748b;">${unit}</span>`;
+        stops.forEach(([c,lbl]) => { html += `<div class="legend-item"><div class="legend-color" style="background:${c}"></div><span>${lbl}</span></div>`; });
+        legendWrap.innerHTML = html;
+      }
+    }
+
+    // 감염병명 축약 매핑 — 추후 여기에 추가/수정
+    const DISEASE_ABBREV = {
+      '유행성이하선염': '이하선염',
+      '카바페넴내성장내세균목': 'CRE 감염증',
+      'CRE감염증': 'CRE 감염증',
+    };
+
     function processName(name) {
       if (!name) return name;
-      if (name.includes('유행성이하선염')) return '이하선염';
-      if (name.includes('카바페넴') || name.includes('CRE')) return 'CRE 감염증';
+      for (const [key, abbr] of Object.entries(DISEASE_ABBREV)) {
+        if (name.includes(key)) return abbr;
+      }
       return name;
     }
 
@@ -1221,65 +1308,7 @@
             mapData.push({ name: '세종시 ' + r, value: val, rate: rateText, cnt: cnt, shortName: r });
           });
 
-          if (typeof echarts !== 'undefined' && document.getElementById('c3_map')) {
-            if (!window.c3_map_instance) {
-              sejongGeoJson.features.forEach(f => {
-                if (f.properties.adm_nm) f.properties.name = f.properties.adm_nm.replace('세종특별자치시 ', '');
-              });
-              echarts.registerMap('sejong', sejongGeoJson);
-              window.c3_map_instance = echarts.init(document.getElementById('c3_map'));
-            }
-
-            let maxVal = Math.max(...mapData.map(d => d.value));
-            if (maxVal === 0) maxVal = 1;
-
-            window.c3_map_instance.setOption({
-              tooltip: { trigger: 'item', padding: 10, backgroundColor: 'rgba(255,255,255,0.95)', textStyle: { color: '#0f172a' }, extraCssText: 'box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius:8px; border:none;', formatter: (p) => p.data ? `<div style="font-weight:700;margin-bottom:4px;border-bottom:1px solid #e2e8f0;padding-bottom:4px;">${p.data.shortName}</div>발생률: <span style="font-weight:700;color:#2563eb;">${p.data.rate}명</span><br/>신고건수: <span style="font-weight:700;color:#0f172a;">${p.data.cnt}건</span>` : p.name },
-              visualMap: { 
-                show: false,
-                min: 0, 
-                max: maxVal, 
-                inRange: { color: ['#f8fafc', '#93c5fd', '#3b82f6', '#1d4ed8'] }
-              },
-              series: [{ 
-                type: 'map', 
-                map: 'sejong', 
-                roam: false, 
-                zoom: 1.25,
-                top: 0,
-                label: { 
-                  show: true, 
-                  fontSize: 9, 
-                  hideOverlap: true,
-                  color: '#334155',
-                  formatter: (p) => p.name.replace('세종시 ', '')
-                },
-                itemStyle: { borderColor: '#fff' },
-                emphasis: { itemStyle: { areaColor: '#dbeafe' }, label: { show: true, fontWeight: 'bold' } },
-                data: mapData 
-              }]
-            }, true);
-
-            // Update Custom Legend
-            const legendWrap = document.getElementById('c3_map_legend');
-            if (legendWrap) {
-              const unit = window.p3_viewMode === 'rate' ? '명' : '건';
-              const colors = ['#f8fafc', '#93c5fd', '#3b82f6', '#1d4ed8'];
-              const step = maxVal / (colors.length - 1);
-              let html = `<span style="margin-right:8px;font-weight:700;color:#64748b;">${unit}</span>`;
-              colors.forEach((c, idx) => {
-                let label = '';
-                if (idx === 0) label = '0';
-                else if (idx === colors.length - 1) label = Math.ceil(maxVal) + '+';
-                else label = Math.ceil(step * idx);
-                html += `<div class="legend-item"><div class="legend-color" style="background:${c}"></div><span>${label}</span></div>`;
-              });
-              legendWrap.innerHTML = html;
-            }
-
-
-            window.c3_map_instance.resize();
-          }
+          renderMapSVG(mapData);
         }, 50);
 
         // Heatmap logic kept identical
