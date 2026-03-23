@@ -958,7 +958,7 @@
         initChart('c1_top5', {
           type: 'bar',
           data: { labels: top5.map(x => x[0]), datasets: [{ data: top5.map(x => x[1]), backgroundColor: PALETTE[0], borderRadius: 4, barThickness: 40 }] },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: '#0f172a', font: { weight: 'bold' } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: '#0f172a', font: { weight: 'bold' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
         });
 
         // For c1_comp, we apply the year filter so the chart matches the dynamically updated year title
@@ -993,7 +993,7 @@
           options: {
             indexAxis: 'y',
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false }, datalabels: { color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => parseFloat(v) > 5 ? ctx.dataset.label + '\n' + v + '%' : '' } },
+            plugins: { legend: { display: false }, datalabels: { color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => parseFloat(v) > 5 ? ctx.dataset.label + '\n' + v + '%' : '' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}%` } } },
             scales: { x: { stacked: true, max: 100, display: false }, y: { stacked: true, display: true, grid: { display: false }, border: { display: false } } }
           }
         });
@@ -1100,7 +1100,8 @@
                 color: '#fff',
                 font: { size: 10, weight: 'bold' },
                 formatter: (v, ctx) => parseFloat(v) > 5 ? ctx.dataset.label + '\n' + v + '%' : ''
-              }
+              },
+              tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}%` } }
             },
             scales: {
               x: { stacked: true, grid: { display: false } },
