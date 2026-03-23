@@ -817,11 +817,18 @@
       return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, n);
     }
 
-    const createSparkline = (id, labels, data, color) => {
+    const formatSparkLabel = (label) => {
+      if (!label) return label;
+      const parts = label.split('.');
+      if (parts.length === 2) return `20${parts[0]}년 ${parseInt(parts[1])}월`;
+      return label;
+    };
+
+    const createSparkline = (id, labels, data, color, unit) => {
       initChart(id, {
         type: 'line',
         data: { labels: labels, datasets: [{ data, borderColor: color, backgroundColor: color + '33', fill: true, borderWidth: 2, tension: 0.3, pointRadius: 4, pointHoverRadius: 6 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, tooltip: { enabled: true, callbacks: { title: (c) => c[0].label, label: (c) => c.raw } } }, scales: { x: { display: true, grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' } } }, y: { display: false, min: 0 } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, tooltip: { enabled: true, callbacks: { title: (c) => formatSparkLabel(c[0].label), label: (c) => `${c.raw}${unit || ''}` } } }, scales: { x: { display: true, grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' } } }, y: { display: false, min: 0 } } }
       });
     };
 
@@ -934,8 +941,8 @@
       idHtml('sub_k4_1', `전월대비 ${formatDiff(k4_diff_m, '%')}`);
       idHtml('sub_k4_2', `전년동월대비 ${formatDiff(k4_diff_y, '%')}`);
 
-      createSparkline('k1_spark', k3_labels, k3_spark, '#dc2626');
-      createSparkline('k2_spark', k3_labels, k4_spark, '#2563eb');
+      createSparkline('k1_spark', k3_labels, k3_spark, '#dc2626', '건');
+      createSparkline('k2_spark', k3_labels, k4_spark, '#2563eb', '명');
 
       const activeTab = document.querySelector('.tab.active').dataset.target;
 
@@ -1017,6 +1024,7 @@
               datalabels: { display: false },
               tooltip: {
                 callbacks: {
+                  title: (c) => `${c[0].label}년`,
                   label: (ctx) => window.c2_viewMode === 'cnt' ? `세종 건수: ${ctx.raw}건` : `발생률: ${ctx.raw}명 (10만명당)`
                 }
               }
@@ -1034,7 +1042,7 @@
         }));
         initChart('c2_5y', {
           type: 'line', data: { labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'], datasets: datasets5y },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => { const yr = c[0].dataset.label; return yr ? `${yr}년 ${c[0].label}` : c[0].label; }, label: (ctx) => `${ctx.dataset.label}년: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
         });
 
         const top5 = getTopN(rawData, 5).map(x => x[0]);
@@ -1047,7 +1055,7 @@
               return { label: nm, data: counts, borderColor: window.getGlobalColor(nm), borderWidth: 2, pointRadius: 4, tension: 0.3 };
             })
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
         });
 
         const last5Years = years.slice(-5);
@@ -1254,7 +1262,7 @@
         });
         initChart('c4_age_rate', {
           type: 'bar', data: { labels: ageKeys, datasets: [{ label: '발생률', data: rates, backgroundColor: PALETTE[0], borderRadius: 4, barThickness: 30 }] },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `발생률: ${ctx.raw}명 (10만명당)` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
         });
 
         const lcMap = {
@@ -1284,7 +1292,7 @@
         initChart('c4_lifecycle', {
           type: 'bar',
           data: { labels: lcKeys, datasets: c4LcDatasets },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
         });
       }
 
@@ -1308,7 +1316,7 @@
       const years = Object.keys(yearGrp).sort().slice(-7);
       initChart('c5_trend', {
         type: 'line', data: { labels: years, datasets: [{ label: name + ' 건수', data: years.map(y => yearGrp[y] || 0), borderColor: PALETTE[0], backgroundColor: PALETTE[0] + '33', fill: true, tension: 0.3, pointRadius: 4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
       });
 
       const mths = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
@@ -1328,7 +1336,7 @@
       initChart('c5_month', {
         type: 'line',
         data: { labels: mths, datasets: c5Datasets },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: GRID_COLOR } }, x: { grid: { display: false } } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label} ${ctx.label}: ${ctx.raw}건` } } }, scales: { y: { beginAtZero: true, grid: { color: GRID_COLOR } }, x: { grid: { display: false } } } }
       });
     };
 
