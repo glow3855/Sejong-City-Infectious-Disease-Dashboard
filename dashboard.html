@@ -463,6 +463,56 @@
       border-radius: 3px;
       border: 1px solid rgba(0,0,0,0.1);
     }
+
+    /* Card header: title + button group in a flex row */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .card-header h3 { margin-bottom: 0; }
+    .card-header-sm { margin-bottom: 10px; }
+
+    /* KPI card internal layout */
+    .kpi-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .kpi-right { text-align: right; }
+    .kpi-sub-inline { display: inline-block; }
+    .kpi-sub-inline + .kpi-sub-inline { margin-left: 8px; }
+    .kpi-unit { font-size: 16px; font-weight: 600; color: #64748b; margin-left: 4px; }
+    .kpi-unit-sm { font-size: 14px; font-weight: 600; color: #64748b; margin-left: 4px; }
+
+    /* Sparkline label */
+    .sparkline-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+    .sparkline-box.h110 { height: 110px; }
+
+    /* Scroll containers */
+    .scroll-container {
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 600px;
+    }
+
+    /* P3 map layout helpers */
+    .map-card { display: flex; flex-direction: column; }
+    .map-wrap { flex-grow: 0; height: 500px; aspect-ratio: auto; margin-top: 10px; }
+    .rank-scroll { flex-grow: 1; height: 500px; overflow-y: auto; padding-right: 8px; }
+    .rank-chart-wrap { height: 650px; max-height: none; aspect-ratio: auto; }
+
+    /* Hint text */
+    .hint-text { font-size: 13px; color: #64748b; margin-bottom: 12px; }
   </style>
 </head>
 
@@ -470,12 +520,9 @@
 
   <!-- Header -->
   <div class="header">
-    <div style="display: flex; align-items: center; gap: 15px;">
-
-      <div>
-        <h1>세종시 감염병 현황</h1>
-        <span class="subtitle">Sejong City Infectious Disease Dashboard</span>
-      </div>
+    <div>
+      <h1>세종시 감염병 현황</h1>
+      <span class="subtitle">Sejong City Infectious Disease Dashboard</span>
     </div>
     <div class="date-badge" id="data_date_badge">데이터 기준: </div>
   </div>
@@ -505,46 +552,40 @@
       <div class="grid-2">
         <!-- Card 1: 신고건수 -->
         <div class="card kpi">
-          <div
-            style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid #e2e8f0; padding-bottom:12px; margin-bottom:12px;">
+          <div class="kpi-row">
             <div>
               <div class="kpi-label" id="lbl_k3">당월 신고건수</div>
-              <div class="kpi-value" id="val_k3">0<span
-                  style="font-size:16px;font-weight:600;color:#64748b;margin-left:4px;">건</span></div>
-              <div class="kpi-sub" id="sub_k3_1" style="display:inline-block;">전월대비 -</div>
-              <div class="kpi-sub" id="sub_k3_2" style="display:inline-block; margin-left:8px;">전년동월대비 -</div>
+              <div class="kpi-value" id="val_k3">0<span class="kpi-unit">건</span></div>
+              <div class="kpi-sub kpi-sub-inline" id="sub_k3_1">전월대비 -</div>
+              <div class="kpi-sub kpi-sub-inline" id="sub_k3_2">전년동월대비 -</div>
             </div>
-            <div style="text-align:right;">
+            <div class="kpi-right">
               <div class="kpi-label" id="lbl_k1">누적 신고건수</div>
-              <div class="kpi-value" id="val_k1" style="font-size:24px;">0<span
-                  style="font-size:14px;font-weight:600;color:#64748b;margin-left:4px;">건</span></div>
+              <div class="kpi-value" id="val_k1">0<span class="kpi-unit-sm">건</span></div>
               <div class="kpi-sub" id="sub_k1">전년동기간대비 -</div>
             </div>
           </div>
-          <div style="font-size:13px; font-weight:600; color:#475569; margin-bottom:8px;">최근 6개월 신고건수 추이</div>
-          <div class="sparkline-box" style="height:110px;"><canvas id="k1_spark"></canvas></div>
+          <div class="sparkline-label">최근 6개월 신고건수 추이</div>
+          <div class="sparkline-box h110"><canvas id="k1_spark"></canvas></div>
         </div>
 
         <!-- Card 2: 발생률 -->
         <div class="card kpi">
-          <div
-            style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid #e2e8f0; padding-bottom:12px; margin-bottom:12px;">
+          <div class="kpi-row">
             <div>
               <div class="kpi-label" id="lbl_k4">당월 발생률 (인구 10만명당)</div>
-              <div class="kpi-value" id="val_k4">0.0<span
-                  style="font-size:16px;font-weight:600;color:#64748b;margin-left:4px;">명</span></div>
-              <div class="kpi-sub" id="sub_k4_1" style="display:inline-block;">전월대비 -</div>
-              <div class="kpi-sub" id="sub_k4_2" style="display:inline-block; margin-left:8px;">전년동월대비 -</div>
+              <div class="kpi-value" id="val_k4">0.0<span class="kpi-unit">명</span></div>
+              <div class="kpi-sub kpi-sub-inline" id="sub_k4_1">전월대비 -</div>
+              <div class="kpi-sub kpi-sub-inline" id="sub_k4_2">전년동월대비 -</div>
             </div>
-            <div style="text-align:right;">
+            <div class="kpi-right">
               <div class="kpi-label" id="lbl_k2">누적 발생률 (인구 10만명당)</div>
-              <div class="kpi-value" id="val_k2" style="font-size:24px;">0.0<span
-                  style="font-size:14px;font-weight:600;color:#64748b;margin-left:4px;">명</span></div>
+              <div class="kpi-value" id="val_k2">0.0<span class="kpi-unit-sm">명</span></div>
               <div class="kpi-sub" id="sub_k2">전년동기간대비 -</div>
             </div>
           </div>
-          <div style="font-size:13px; font-weight:600; color:#475569; margin-bottom:8px;">최근 6개월 발생률 추이</div>
-          <div class="sparkline-box" style="height:110px;"><canvas id="k2_spark"></canvas></div>
+          <div class="sparkline-label">최근 6개월 발생률 추이</div>
+          <div class="sparkline-box h110"><canvas id="k2_spark"></canvas></div>
         </div>
       </div>
 
@@ -576,13 +617,11 @@
 
       <div class="grid-2">
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-            <h3 style="margin-bottom:0; font-size:16px; font-weight:700;">연도별 신고건수 / 발생률 추이</h3>
-            <div style="display:flex; gap:8px;">
-              <button id="btn_c2_cnt"
-                style="padding:4px 12px; font-size:13px; font-weight:600; border:1px solid #003e74; border-radius:4px; background:#003e74; color:#fff; cursor:pointer; transition:all 0.2s;">신고건수</button>
-              <button id="btn_c2_rate"
-                style="padding:4px 12px; font-size:13px; font-weight:600; border:1px solid #cbd5e1; border-radius:4px; background:#f8fafc; color:#475569; cursor:pointer; transition:all 0.2s;">발생률</button>
+          <div class="card-header">
+            <h3>연도별 신고건수 / 발생률 추이</h3>
+            <div class="btn-group">
+              <button id="btn_c2_cnt" class="btn-toggle active">신고건수</button>
+              <button id="btn_c2_rate" class="btn-toggle">발생률</button>
             </div>
           </div>
           <div class="chart-wrap"><canvas id="c2_yearly"></canvas></div>
@@ -618,27 +657,25 @@
       </div>
 
       <div class="grid-map-fixed">
-        <div class="card" style="display:flex; flex-direction:column;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h3 style="margin-bottom:0; font-size:16px; font-weight:700;">2026년 누적 읍면동별 발생지도</h3>
+        <div class="card map-card">
+          <div class="card-header">
+            <h3 id="c3_map_title">읍면동별 발생지도</h3>
             <div id="c3_map_legend" class="map-legend"></div>
           </div>
-          <div class="chart-wrap" style="flex-grow:0; height:500px; aspect-ratio:auto; margin-top:10px;">
+          <div class="map-wrap">
             <div id="c3_map" style="width:100%;height:100%;"></div>
           </div>
         </div>
-        <div class="card" style="display:flex; flex-direction:column;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <h3 id="c3_rank_title" style="margin-bottom:0;">읍면동별 발생률 순위</h3>
-            <div style="display:flex; gap:8px;">
-              <button id="btn_p3_rate"
-                style="padding:4px 12px; font-size:13px; font-weight:600; border:1px solid #003e74; border-radius:4px; background:#003e74; color:#fff; cursor:pointer; transition:all 0.2s;">발생률</button>
-              <button id="btn_p3_cnt"
-                style="padding:4px 12px; font-size:13px; font-weight:600; border:1px solid #cbd5e1; border-radius:4px; background:#f8fafc; color:#475569; cursor:pointer; transition:all 0.2s;">신고건수</button>
+        <div class="card map-card">
+          <div class="card-header card-header-sm">
+            <h3 id="c3_rank_title">읍면동별 발생률 순위</h3>
+            <div class="btn-group">
+              <button id="btn_p3_rate" class="btn-toggle active">발생률</button>
+              <button id="btn_p3_cnt" class="btn-toggle">신고건수</button>
             </div>
           </div>
-          <div style="flex-grow:1; height:500px; overflow-y:auto; padding-right:8px;">
-            <div class="chart-wrap" style="height:650px; max-height:none; aspect-ratio:auto;">
+          <div class="rank-scroll">
+            <div class="chart-wrap rank-chart-wrap">
               <canvas id="c3_rank_bar"></canvas>
             </div>
           </div>
@@ -648,7 +685,7 @@
       <div class="grid-1">
         <div class="card">
           <h3>읍면별 감염병 발생현황 (월별 Heatmap)</h3>
-          <div style="overflow-x:auto; overflow-y:auto; max-height:600px; display:block;">
+          <div class="scroll-container">
             <table class="data-table" id="table_heatmap"></table>
           </div>
         </div>
@@ -673,8 +710,8 @@
           <div class="chart-wrap h400"><canvas id="c4_age_rate"></canvas></div>
         </div>
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 style="margin-bottom: 0;">성별·연령별 발생분포</h3>
+          <div class="card-header">
+            <h3>성별·연령별 발생분포</h3>
             <div class="btn-group" id="p4_butterfly_toggle">
               <button id="btn_p4_cnt" class="btn-toggle active" data-mode="count">건수</button>
               <button id="btn_p4_rate" class="btn-toggle" data-mode="rate">발생률</button>
@@ -715,54 +752,9 @@
       <div class="grid-1">
         <div class="card">
           <h3>감염병 신고현황 (질병급별)</h3>
-          <p style="font-size:13px; color:#64748b; margin-bottom:12px;">✅ 행을 클릭하면 하단 연도별/월별 그래프가 해당 질병으로 업데이트됩니다.</p>
-          <div style="overflow-x:auto; overflow-y:auto; max-height:600px; display:block;">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>질병급</th>
-                  <th>감염병명</th>
-                  <th>2024년</th>
-                  <th>2025년</th>
-                  <th>2026년 누적</th>
-                  <th>증감 추이</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style="cursor:pointer; background:#f4f6f9;">
-                  <td>2급</td>
-                  <td style="font-weight:700; color:#003e74;">결핵</td>
-                  <td>120</td>
-                  <td>98</td>
-                  <td style="font-weight:700;">45</td>
-                  <td style="color:#2563eb;">▼ 4%</td>
-                </tr>
-                <tr style="cursor:pointer;">
-                  <td>2급</td>
-                  <td style="font-weight:700; color:#003e74;">CRE감염증</td>
-                  <td>85</td>
-                  <td>92</td>
-                  <td style="font-weight:700;">88</td>
-                  <td style="color:#dc2626;">▲ 2%</td>
-                </tr>
-                <tr style="cursor:pointer;">
-                  <td>3급</td>
-                  <td style="font-weight:700; color:#003e74;">수두</td>
-                  <td>440</td>
-                  <td>528</td>
-                  <td style="font-weight:700;">320</td>
-                  <td style="color:#dc2626;">▲ 12%</td>
-                </tr>
-                <tr style="cursor:pointer;">
-                  <td>3급</td>
-                  <td style="font-weight:700; color:#003e74;">성홍열</td>
-                  <td>310</td>
-                  <td>374</td>
-                  <td style="font-weight:700;">215</td>
-                  <td style="color:#2563eb;">▼ 5%</td>
-                </tr>
-              </tbody>
-            </table>
+          <p class="hint-text">행을 클릭하면 하단 연도별/월별 그래프가 해당 질병으로 업데이트됩니다.</p>
+          <div class="scroll-container">
+            <table class="data-table"><thead></thead><tbody></tbody></table>
           </div>
         </div>
       </div>
@@ -848,6 +840,7 @@
 
     // 전역 필터 상태
     const filterState = { year: '전체', month: '전체', grade: '전체', disease: '전체' };
+    const viewState = { c2: 'cnt', p3: 'rate', p4: 'cnt' };
 
     function syncFilterUI() {
       document.querySelectorAll('.tab-filter[data-key="year"]').forEach(el => el.value = filterState.year);
@@ -950,7 +943,7 @@
 
       const legendWrap = document.getElementById('c3_map_legend');
       if (legendWrap) {
-        const unit = window.p3_viewMode === 'rate' ? '명' : '건';
+        const unit = viewState.p3 === 'rate' ? '명' : '건';
         const stops = [['#f8fafc','0'],['#dbeafe',Math.ceil(maxVal*0.25)],['#93c5fd',Math.ceil(maxVal*0.5)],['#3b82f6',Math.ceil(maxVal*0.75)],['#1d4ed8',Math.ceil(maxVal)+'+']];
         let html = `<span style="margin-right:8px;font-weight:700;color:#64748b;">${unit}</span>`;
         stops.forEach(([c,lbl]) => { html += `<div class="legend-item"><div class="legend-color" style="background:${c}"></div><span>${lbl}</span></div>`; });
@@ -1013,6 +1006,8 @@
       if (elTop5) elTop5.innerText = `${tyLabel} 주요 감염병 TOP 5`;
       const elComp = document.getElementById('p1_comp_title');
       if (elComp) elComp.innerText = `${tyLabel} 전국/세종 구성비 비교`;
+      const elMapTitle = document.getElementById('c3_map_title');
+      if (elMapTitle) elMapTitle.innerText = `${tyLabel}${tmLabel} 읍면동별 발생지도`;
 
       // 가장 최근 데이터 연월 파악 (데이터 기준 표기용)
       const allYears = [...new Set(rawData.map(d => d['신고일_yy']).filter(Boolean))].sort().reverse();
@@ -1093,16 +1088,16 @@
       idText('lbl_k3', `${tm}월 신고건수`);
       idText('lbl_k4', `${tm}월 발생률`);
 
-      idHtml('val_k1', `${k1_val}<span style="font-size:16px;font-weight:600;color:#64748b;margin-left:4px;">건</span>`);
+      idHtml('val_k1', `${k1_val}<span class="kpi-unit-sm">건</span>`);
       idHtml('sub_k1', `전년동기간대비 ${formatDiff(k1_diff, '건')}`);
-      idHtml('val_k2', `${k2_val}<span style="font-size:16px;font-weight:600;color:#64748b;margin-left:4px;">명</span>`);
+      idHtml('val_k2', `${k2_val}<span class="kpi-unit-sm">명</span>`);
       idHtml('sub_k2', `전년동기간대비 ${formatDiff(k2_diff, '%')}`);
 
-      idHtml('val_k3', `${k3_val}<span style="font-size:16px;font-weight:600;color:#64748b;margin-left:4px;">건</span>`);
+      idHtml('val_k3', `${k3_val}<span class="kpi-unit">건</span>`);
       idHtml('sub_k3_1', `전월대비 ${formatDiff(k3_diff_m, '건')}`);
       idHtml('sub_k3_2', `전년동월대비 ${formatDiff(k3_diff_y, '건')}`);
 
-      idHtml('val_k4', `${k4_val}<span style="font-size:16px;font-weight:600;color:#64748b;margin-left:4px;">명</span>`);
+      idHtml('val_k4', `${k4_val}<span class="kpi-unit">명</span>`);
       idHtml('sub_k4_1', `전월대비 ${formatDiff(k4_diff_m, '%')}`);
       idHtml('sub_k4_2', `전년동월대비 ${formatDiff(k4_diff_y, '%')}`);
 
@@ -1170,8 +1165,6 @@
         // 2. 연도별
         const yearGrp = baseData.reduce((acc, d) => { acc[d['신고일_yy']] = (acc[d['신고일_yy']] || 0) + 1; return acc; }, {});
         const years = Object.keys(yearGrp).sort();
-        window.c2_viewMode = window.c2_viewMode || 'cnt';
-        window.p4_viewMode = window.p4_viewMode || 'cnt';
         const c2_cntData = years.map(y => yearGrp[y] || 0);
         const c2_rateData = years.map(y => (((yearGrp[y] || 0) / POP_BASE) * 100000).toFixed(1));
 
@@ -1180,7 +1173,7 @@
           data: {
             labels: years,
             datasets: [
-              { label: window.c2_viewMode === 'cnt' ? '세종 건수' : '발생률', data: window.c2_viewMode === 'cnt' ? c2_cntData : c2_rateData, borderColor: PALETTE[0], borderWidth: 3, pointRadius: 4, tension: 0.3 },
+              { label: viewState.c2 === 'cnt' ? '세종 건수' : '발생률', data: viewState.c2 === 'cnt' ? c2_cntData : c2_rateData, borderColor: PALETTE[0], borderWidth: 3, pointRadius: 4, tension: 0.3 },
             ]
           },
           options: {
@@ -1192,7 +1185,7 @@
               tooltip: {
                 callbacks: {
                   title: (c) => `${c[0].label}년`,
-                  label: (ctx) => window.c2_viewMode === 'cnt' ? `세종 건수: ${ctx.raw}건` : `발생률: ${ctx.raw}명 (10만명당)`
+                  label: (ctx) => viewState.c2 === 'cnt' ? `세종 건수: ${ctx.raw}건` : `발생률: ${ctx.raw}명 (10만명당)`
                 }
               }
             },
@@ -1278,7 +1271,6 @@
         });
       }
 
-      window.p3_viewMode = window.p3_viewMode || 'rate';
 
       if (activeTab === 'p3') {
         const emdbGrp = filtered.reduce((acc, d) => { const e = d['통계_emdb'] || '기타'; acc[e] = (acc[e] || 0) + 1; return acc; }, {});
@@ -1286,12 +1278,12 @@
 
         // Sort all 21 items
         const sortedE = regionNames.slice().sort((a, b) => {
-          let vA = window.p3_viewMode === 'rate' ? parseFloat(((emdbGrp[a] || 0) / REGION_POP[a] * 100000).toFixed(1)) : (emdbGrp[a] || 0);
-          let vB = window.p3_viewMode === 'rate' ? parseFloat(((emdbGrp[b] || 0) / REGION_POP[b] * 100000).toFixed(1)) : (emdbGrp[b] || 0);
+          let vA = viewState.p3 === 'rate' ? parseFloat(((emdbGrp[a] || 0) / REGION_POP[a] * 100000).toFixed(1)) : (emdbGrp[a] || 0);
+          let vB = viewState.p3 === 'rate' ? parseFloat(((emdbGrp[b] || 0) / REGION_POP[b] * 100000).toFixed(1)) : (emdbGrp[b] || 0);
           return vB - vA;
         });
 
-        let barData = sortedE.map(e => window.p3_viewMode === 'rate' ? parseFloat(((emdbGrp[e] || 0) / REGION_POP[e] * 100000).toFixed(1)) : (emdbGrp[e] || 0));
+        let barData = sortedE.map(e => viewState.p3 === 'rate' ? parseFloat(((emdbGrp[e] || 0) / REGION_POP[e] * 100000).toFixed(1)) : (emdbGrp[e] || 0));
 
         initChart('c3_rank_bar', {
           type: 'bar',
@@ -1302,7 +1294,7 @@
               legend: { display: false },
               datalabels: { align: 'end', anchor: 'end', color: '#0f172a' },
               tooltip: {
-                callbacks: { label: (c) => window.p3_viewMode === 'rate' ? `발생률: ${c.raw}명` : `신고건수: ${c.raw}건` }
+                callbacks: { label: (c) => viewState.p3 === 'rate' ? `발생률: ${c.raw}명` : `신고건수: ${c.raw}건` }
               }
             },
             scales: { x: { grid: { display: false } }, y: { grid: { display: false }, ticks: { autoSkip: false } } }
@@ -1315,7 +1307,7 @@
             let cnt = emdbGrp[r] || 0;
             let rateVal = ((cnt / REGION_POP[r]) * 100000);
             let rateText = rateVal.toFixed(1);
-            let val = window.p3_viewMode === 'rate' ? parseFloat(rateText) : cnt;
+            let val = viewState.p3 === 'rate' ? parseFloat(rateText) : cnt;
             // Prefix '세종시 ' to match GeoJSON property name
             mapData.push({ name: '세종시 ' + r, value: val, rate: rateText, cnt: cnt, shortName: r });
           });
@@ -1371,7 +1363,7 @@
         let displayF = fAge;
         let unit = '건';
 
-        if (window.p4_viewMode === 'rate') {
+        if (viewState.p4 === 'rate') {
           unit = '명';
           displayM = ageKeys.map((a, i) => {
             let pop = ageGroup10[a].reduce((sum, sub) => sum + (AGE_POP[sub] || 0), 0);
@@ -1394,13 +1386,13 @@
             plugins: {
               legend: { position: 'top' },
               datalabels: { display: false },
-              tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.abs(c.raw).toFixed(window.p4_viewMode === 'rate' ? 1 : 0)}${unit} (10만명당)` } }
+              tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.abs(c.raw).toFixed(viewState.p4 === 'rate' ? 1 : 0)}${unit} (10만명당)` } }
             },
             scales: {
               x: {
                 grid: { color: GRID_COLOR },
                 min: -axisLimit, max: axisLimit,
-                ticks: { callback: v => Math.abs(v).toFixed(window.p4_viewMode === 'rate' ? 1 : 0) }
+                ticks: { callback: v => Math.abs(v).toFixed(viewState.p4 === 'rate' ? 1 : 0) }
               },
               y: { grid: { display: false } }
             }
@@ -1545,43 +1537,40 @@
       const btn = e.target.closest('button');
       if (!btn) return;
 
+      const setActive = (groupSelector, activeBtn) => {
+        document.querySelectorAll(groupSelector).forEach(b => b.classList.remove('active'));
+        activeBtn.classList.add('active');
+      };
+
       if (btn.id === 'btn_c2_cnt') {
-        window.c2_viewMode = 'cnt';
-        btn.style.background = '#003e74'; btn.style.color = '#fff'; btn.style.borderColor = '#003e74';
-        document.getElementById('btn_c2_rate').style.background = '#f8fafc'; document.getElementById('btn_c2_rate').style.color = '#475569'; document.getElementById('btn_c2_rate').style.borderColor = '#cbd5e1';
+        viewState.c2 = 'cnt';
+        setActive('#p2 .btn-group .btn-toggle', btn);
         updateDashboard();
       } else if (btn.id === 'btn_c2_rate') {
-        window.c2_viewMode = 'rate';
-        btn.style.background = '#003e74'; btn.style.color = '#fff'; btn.style.borderColor = '#003e74';
-        document.getElementById('btn_c2_cnt').style.background = '#f8fafc'; document.getElementById('btn_c2_cnt').style.color = '#475569'; document.getElementById('btn_c2_cnt').style.borderColor = '#cbd5e1';
+        viewState.c2 = 'rate';
+        setActive('#p2 .btn-group .btn-toggle', btn);
         updateDashboard();
       }
 
       if (btn.id === 'btn_p3_rate') {
-        window.p3_viewMode = 'rate';
-        btn.style.background = '#003e74'; btn.style.color = '#fff'; btn.style.borderColor = '#003e74';
-        document.getElementById('btn_p3_cnt').style.background = '#f8fafc'; document.getElementById('btn_p3_cnt').style.color = '#475569'; document.getElementById('btn_p3_cnt').style.borderColor = '#cbd5e1';
+        viewState.p3 = 'rate';
+        setActive('#p3 .btn-group .btn-toggle', btn);
         if (document.getElementById('c3_rank_title')) document.getElementById('c3_rank_title').innerText = '읍면동별 발생률 순위';
         updateDashboard();
       } else if (btn.id === 'btn_p3_cnt') {
-        window.p3_viewMode = 'cnt';
-        btn.style.background = '#003e74'; btn.style.color = '#fff'; btn.style.borderColor = '#003e74';
-        document.getElementById('btn_p3_rate').style.background = '#f8fafc'; document.getElementById('btn_p3_rate').style.color = '#475569'; document.getElementById('btn_p3_rate').style.borderColor = '#cbd5e1';
+        viewState.p3 = 'cnt';
+        setActive('#p3 .btn-group .btn-toggle', btn);
         if (document.getElementById('c3_rank_title')) document.getElementById('c3_rank_title').innerText = '읍면동별 신고건수 순위';
         updateDashboard();
       }
 
       if (btn.id === 'btn_p4_cnt') {
-        window.p4_viewMode = 'cnt';
-        document.querySelectorAll('#p4_butterfly_toggle .btn-toggle').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if (document.getElementById('p4_butterfly_title')) document.getElementById('p4_butterfly_title').innerText = '성별·연령별 발생분포 (건수)';
+        viewState.p4 = 'cnt';
+        setActive('#p4_butterfly_toggle .btn-toggle', btn);
         updateDashboard();
       } else if (btn.id === 'btn_p4_rate') {
-        window.p4_viewMode = 'rate';
-        document.querySelectorAll('#p4_butterfly_toggle .btn-toggle').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if (document.getElementById('p4_butterfly_title')) document.getElementById('p4_butterfly_title').innerText = '성별·연령별 발생률 (10만명당)';
+        viewState.p4 = 'rate';
+        setActive('#p4_butterfly_toggle .btn-toggle', btn);
         updateDashboard();
       }
     });
