@@ -198,6 +198,19 @@
       margin-bottom: 24px;
     }
 
+    .grid-map-fixed {
+      display: grid;
+      grid-template-columns: 550px 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1100px) {
+      .grid-map-fixed {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* Cards */
     .card {
       background: #fff;
@@ -592,10 +605,10 @@
         <h2 class="page-title">읍면동별 발생현황</h2>
       </div>
 
-      <div class="grid-21">
+      <div class="grid-map-fixed">
         <div class="card" style="display:flex; flex-direction:column; gap:10px;">
           <h3 style="margin-bottom:0; font-size:16px; font-weight:700;">2026년 누적 읍면동별 발생지도 (Choropleth)</h3>
-          <div class="chart-wrap" style="flex-grow:1; min-height:400px; aspect-ratio:auto;">
+          <div class="chart-wrap" style="flex-grow:0; height:500px; aspect-ratio:auto;">
             <div id="c3_map" style="width:100%;height:100%;"></div>
           </div>
         </div>
@@ -609,7 +622,7 @@
                 style="padding:4px 12px; font-size:13px; font-weight:600; border:1px solid #cbd5e1; border-radius:4px; background:#f8fafc; color:#475569; cursor:pointer; transition:all 0.2s;">신고건수</button>
             </div>
           </div>
-          <div style="flex-grow:1; max-height:410px; overflow-y:auto; padding-right:8px;">
+          <div style="flex-grow:1; height:500px; overflow-y:auto; padding-right:8px;">
             <div class="chart-wrap" style="height:650px; max-height:none; aspect-ratio:auto;">
               <canvas id="c3_rank_bar"></canvas>
             </div>
