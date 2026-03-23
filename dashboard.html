@@ -1208,7 +1208,19 @@
             window.c3_map_instance.setOption({
               tooltip: { trigger: 'item', formatter: (p) => p.data ? `${p.data.shortName}<br/>발생률: ${p.data.rate}명 (10만명당)<br/>신고건수: ${p.data.cnt}건` : p.name },
               visualMap: { min: 0, max: maxVal, text: [window.p3_viewMode === 'rate' ? '발생률(명)' : '신고건수(건)', '0'], realtime: false, calculable: true, inRange: { color: ['#f8fafc', '#93c5fd', '#3b82f6', '#1d4ed8'] }, bottom: 20, left: 10 },
-              series: [{ type: 'map', map: 'sejong', roam: false, label: { show: true, fontSize: 10, formatter: (p) => p.name.replace('세종특별자치시 ', '').replace('세종시 ', '') }, data: mapData }]
+              series: [{ 
+                type: 'map', 
+                map: 'sejong', 
+                roam: false, 
+                zoom: 1.2,
+                label: { 
+                  show: true, 
+                  fontSize: 10, 
+                  hideOverlap: true,
+                  formatter: (p) => p.name.replace('세종특별자치시 ', '').replace('세종시 ', '') 
+                }, 
+                data: mapData 
+              }]
             }, true);
 
             window.c3_map_instance.resize();
