@@ -441,6 +441,29 @@
     .stat-val {
       color: #0f172a;
     }
+
+    /* Map Legend Custom */
+    .map-legend {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 
@@ -609,8 +632,9 @@
         <div class="card" style="display:flex; flex-direction:column;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
             <h3 style="margin-bottom:0; font-size:16px; font-weight:700;">2026년 누적 읍면동별 발생지도</h3>
+            <div id="c3_map_legend" class="map-legend"></div>
           </div>
-          <div class="chart-wrap" style="flex-grow:0; height:500px; aspect-ratio:auto;">
+          <div class="chart-wrap" style="flex-grow:0; height:500px; aspect-ratio:auto; margin-top:10px;">
             <div id="c3_map" style="width:100%;height:100%;"></div>
           </div>
         </div>
@@ -1190,9 +1214,11 @@
           let mapData = [];
           regionNames.forEach(r => {
             let cnt = emdbGrp[r] || 0;
-            let rate = ((cnt / REGION_POP[r]) * 100000).toFixed(1);
-            let val = window.p3_viewMode === 'rate' ? parseFloat(rate) : cnt;
-            mapData.push({ name: r, value: val, rate: rate, cnt: cnt, shortName: r });
+            let rateVal = ((cnt / REGION_POP[r]) * 100000);
+            let rateText = rateVal.toFixed(1);
+            let val = window.p3_viewMode === 'rate' ? parseFloat(rateText) : cnt;
+            // Prefix '세종시 ' to match GeoJSON property name
+            mapData.push({ name: '세종시 ' + r, value: val, rate: rateText, cnt: cnt, shortName: r });
           });
 
           if (typeof echarts !== 'undefined' && document.getElementById('c3_map')) {
@@ -1208,35 +1234,49 @@
             if (maxVal === 0) maxVal = 1;
 
             window.c3_map_instance.setOption({
-              tooltip: { trigger: 'item', formatter: (p) => p.data ? `${p.data.shortName}<br/>발생률: ${p.data.rate}명 (10만명당)<br/>신고건수: ${p.data.cnt}건` : p.name },
+              tooltip: { trigger: 'item', padding: 10, backgroundColor: 'rgba(255,255,255,0.95)', textStyle: { color: '#0f172a' }, extraCssText: 'box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius:8px; border:none;', formatter: (p) => p.data ? `<div style="font-weight:700;margin-bottom:4px;border-bottom:1px solid #e2e8f0;padding-bottom:4px;">${p.data.shortName}</div>발생률: <span style="font-weight:700;color:#2563eb;">${p.data.rate}명</span><br/>신고건수: <span style="font-weight:700;color:#0f172a;">${p.data.cnt}건</span>` : p.name },
               visualMap: { 
+                show: false,
                 min: 0, 
                 max: maxVal, 
-                orient: 'horizontal',
-                text: [window.p3_viewMode === 'rate' ? '발생률(명)' : '신고건수(건)', ''], 
-                realtime: false, 
-                calculable: true, 
-                inRange: { color: ['#f8fafc', '#93c5fd', '#3b82f6', '#1d4ed8'] }, 
-                top: 0, 
-                right: 0,
-                itemWidth: 12,
-                itemHeight: 140
+                inRange: { color: ['#f8fafc', '#93c5fd', '#3b82f6', '#1d4ed8'] }
               },
               series: [{ 
                 type: 'map', 
                 map: 'sejong', 
                 roam: false, 
-                zoom: 1.5,
-                top: 60,
+                zoom: 1.25,
+                top: 0,
                 label: { 
                   show: true, 
-                  fontSize: 10, 
+                  fontSize: 9, 
                   hideOverlap: true,
-                  formatter: (p) => p.name.replace('세종특별자치시 ', '').replace('세종시 ', '') 
-                }, 
+                  color: '#334155',
+                  formatter: (p) => p.name.replace('세종시 ', '')
+                },
+                itemStyle: { borderColor: '#fff' },
+                emphasis: { itemStyle: { areaColor: '#dbeafe' }, label: { show: true, fontWeight: 'bold' } },
                 data: mapData 
               }]
             }, true);
+
+            // Update Custom Legend
+            const legendWrap = document.getElementById('c3_map_legend');
+            if (legendWrap) {
+              const unit = window.p3_viewMode === 'rate' ? '명' : '건';
+              const colors = ['#f8fafc', '#93c5fd', '#3b82f6', '#1d4ed8'];
+              const step = maxVal / (colors.length - 1);
+              let html = `<span style="margin-right:8px;font-weight:700;color:#64748b;">${unit}</span>`;
+              colors.forEach((c, idx) => {
+                let label = '';
+                if (idx === 0) label = '0';
+                else if (idx === colors.length - 1) label = Math.ceil(maxVal) + '+';
+                else label = Math.ceil(step * idx);
+                html += `<div class="legend-item"><div class="legend-color" style="background:${c}"></div><span>${label}</span></div>`;
+              });
+              legendWrap.innerHTML = html;
+            }
+
 
             window.c3_map_instance.resize();
           }
