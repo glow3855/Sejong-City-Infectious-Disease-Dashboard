@@ -778,7 +778,14 @@
       '20-29세': 35000, '30-39세': 65000, '40-49세': 70000, '50-59세': 50000,
       '60-69세': 40000, '70-79세': 20000, '80세이상': 15000
     };
-    const KR_COMP = { '수두': 30.1, '성홍열': 22.8, '이하선염': 15.3, 'CRE감염증': 12.1, '코로나19': 14.7 };
+    const KR_COMP_BY_YEAR = {
+      '2020': { '수두': 32.5, '성홍열': 24.1, '이하선염': 16.8, 'CRE감염증': 9.8, '코로나19': 2.1 },
+      '2021': { '수두': 18.3, '성홍열': 10.5, '이하선염': 9.2, 'CRE감염증': 10.4, '코로나19': 42.6 },
+      '2022': { '수두': 14.7, '성홍열': 12.3, '이하선염': 11.1, 'CRE감염증': 11.8, '코로나19': 40.2 },
+      '2023': { '수두': 22.0, '성홍열': 18.5, '이하선염': 14.0, 'CRE감염증': 12.5, '코로나19': 23.1 },
+      '2024': { '수두': 28.6, '성홍열': 21.3, '이하선염': 14.9, 'CRE감염증': 12.0, '코로나19': 13.2 },
+      '2025': { '수두': 30.1, '성홍열': 22.8, '이하선염': 15.3, 'CRE감염증': 12.1, '코로나19': 14.7 }
+    };
     const KR_RATE = { '0-4세': 150, '5-9세': 540, '10-14세': 480, '15-19세': 280, '20-29세': 100, '30-39세': 90, '40-49세': 115, '50-59세': 140, '60-69세': 130, '70-79세': 95, '80세이상': 80 };
 
     // 탭 핸들러
@@ -973,8 +980,10 @@
         let sjOther = 100 - sjData.reduce((a, b) => a + b.val, 0);
         if (sjOther > 0.05) sjData.push({ name: '그 외', val: sjOther });
 
-        const krKeys = Object.keys(KR_COMP);
-        let krData = krKeys.map(k => ({ name: k, val: parseFloat(KR_COMP[k]) })).sort((a, b) => b.val - a.val);
+        const krYears = Object.keys(KR_COMP_BY_YEAR).sort();
+        const krYear = KR_COMP_BY_YEAR[f_year] ? f_year : krYears[krYears.length - 1];
+        const krKeys = Object.keys(KR_COMP_BY_YEAR[krYear]);
+        let krData = krKeys.map(k => ({ name: k, val: parseFloat(KR_COMP_BY_YEAR[krYear][k]) })).sort((a, b) => b.val - a.val);
         let krOther = 100 - krData.reduce((a, b) => a + b.val, 0);
         if (krOther > 0.05) krData.push({ name: '그 외', val: krOther });
 
