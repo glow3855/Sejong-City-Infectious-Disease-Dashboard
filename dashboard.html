@@ -507,7 +507,7 @@
 
     /* P3 map layout helpers */
     .map-card { display: flex; flex-direction: column; }
-    .map-wrap { flex-grow: 0; height: 500px; aspect-ratio: auto; margin-top: 10px; }
+    .map-wrap { flex-grow: 0; height: 500px; aspect-ratio: auto; margin-top: 10px; border: 1.5px solid #64748b; border-radius: 4px; }
     .rank-scroll { flex-grow: 1; height: 500px; overflow-y: auto; padding-right: 8px; }
     .rank-chart-wrap { height: 650px; max-height: none; aspect-ratio: auto; }
 
@@ -668,10 +668,10 @@
         </div>
         <div class="card map-card">
           <div class="card-header card-header-sm">
-            <h3 id="c3_rank_title">읍면동별 발생률 순위</h3>
+            <h3 id="c3_rank_title">읍면동별 신고건수 순위</h3>
             <div class="btn-group">
-              <button id="btn_p3_rate" class="btn-toggle active">발생률</button>
-              <button id="btn_p3_cnt" class="btn-toggle">신고건수</button>
+              <button id="btn_p3_cnt" class="btn-toggle active">신고건수</button>
+              <button id="btn_p3_rate" class="btn-toggle">발생률</button>
             </div>
           </div>
           <div class="rank-scroll">
@@ -840,7 +840,7 @@
 
     // 전역 필터 상태
     const filterState = { year: '전체', month: '전체', grade: '전체', disease: '전체' };
-    const viewState = { c2: 'cnt', p3: 'rate', p4: 'cnt' };
+    const viewState = { c2: 'cnt', p3: 'cnt', p4: 'cnt' };
 
     function syncFilterUI() {
       document.querySelectorAll('.tab-filter[data-key="year"]').forEach(el => el.value = filterState.year);
@@ -904,10 +904,12 @@
         return '#1d4ed8';
       };
 
-      let paths = '', lbls = '';
+      let paths = '';
+      const labelData = [];
       sejongGeoJson.features.forEach(f => {
         const sn = (f.properties.adm_nm || '').replace('세종특별자치시 ', '');
-        const fn = '세종시 ' + sn;
+        const fn = sn;
+        const labelName = sn.replace('세종시 ', '');
         const d = dataMap[fn];
         const color = getColor(d ? d.value : 0);
         const rings = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates.flat(1) : f.geometry.coordinates;
@@ -919,8 +921,27 @@
         });
         const cx = (allPts.reduce((s,p)=>s+p[0],0)/allPts.length).toFixed(1);
         const cy = (allPts.reduce((s,p)=>s+p[1],0)/allPts.length).toFixed(1);
-        paths += `<path d="${pd}" fill="${color}" stroke="#fff" stroke-width="0.8" class="map-rgn" data-name="${sn}" data-rate="${d?d.rate:'-'}" data-cnt="${d?d.cnt:0}"/>`;
-        lbls  += `<text x="${cx}" y="${cy}" font-size="7.5" fill="#334155" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${sn}</text>`;
+        paths += `<path d="${pd}" fill="${color}" stroke="#94a3b8" stroke-width="0.8" class="map-rgn" data-name="${labelName}" data-rate="${d?d.rate:'-'}" data-cnt="${d?d.cnt:0}"/>`;
+        labelData.push({ cx: parseFloat(cx), cy: parseFloat(cy), name: labelName, value: d ? d.value : 0 });
+      });
+
+      // 값 내림차순 정렬 → 값이 클수록(색이 진할수록) 라벨 우선 배치
+      labelData.sort((a, b) => b.value - a.value);
+      const CHAR_W = 9, LBL_H = 14;
+      const placed = [];
+      let lbls = '';
+      labelData.forEach(({ cx, cy, name, value }) => {
+        const halfW = (name.length * CHAR_W) / 2;
+        const halfH = LBL_H / 2;
+        const overlaps = placed.some(p =>
+          Math.abs(cx - p.cx) < halfW + p.halfW + 3 &&
+          Math.abs(cy - p.cy) < halfH + p.halfH + 3
+        );
+        if (!overlaps) {
+          const textColor = value > maxVal * 0.5 ? '#fff' : '#1e293b';
+          lbls += `<text x="${cx.toFixed(1)}" y="${cy.toFixed(1)}" font-size="9" font-weight="700" fill="${textColor}" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${name}</text>`;
+          placed.push({ cx, cy, halfW, halfH });
+        }
       });
 
       container.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"><g>${paths}</g><g>${lbls}</g></svg>`;
@@ -943,11 +964,8 @@
 
       const legendWrap = document.getElementById('c3_map_legend');
       if (legendWrap) {
-        const unit = viewState.p3 === 'rate' ? '명' : '건';
-        const stops = [['#f8fafc','0'],['#dbeafe',Math.ceil(maxVal*0.25)],['#93c5fd',Math.ceil(maxVal*0.5)],['#3b82f6',Math.ceil(maxVal*0.75)],['#1d4ed8',Math.ceil(maxVal)+'+']];
-        let html = `<span style="margin-right:8px;font-weight:700;color:#64748b;">${unit}</span>`;
-        stops.forEach(([c,lbl]) => { html += `<div class="legend-item"><div class="legend-color" style="background:${c}"></div><span>${lbl}</span></div>`; });
-        legendWrap.innerHTML = html;
+        const maxLabel = viewState.p3 === 'rate' ? maxVal.toFixed(1) : Math.ceil(maxVal);
+        legendWrap.innerHTML = `<div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;"><div style="width:140px;height:14px;border-radius:4px;background:linear-gradient(to right,#dbeafe,#93c5fd,#3b82f6,#1d4ed8);border:1px solid #e2e8f0;"></div><div style="width:140px;display:flex;justify-content:space-between;"><span style="font-size:11px;color:#64748b;">0</span><span style="font-size:11px;color:#64748b;">${maxLabel}</span></div></div>`;
       }
     }
 
@@ -1318,7 +1336,7 @@
         // Heatmap logic kept identical
         const p3_data = filterState.year !== '전체' ? baseData.filter(d => d['신고일_yy'] === filterState.year) : baseData;
         const mths = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-        const hmSortedE = Object.keys(emdbGrp).filter(e => e !== '기타').sort((a, b) => emdbGrp[b] - emdbGrp[a]);
+        const hmSortedE = Object.keys(emdbGrp).filter(e => REGION_POP[e]).sort((a, b) => emdbGrp[b] - emdbGrp[a]);
         let ht = '<thead><tr><th>읍면동</th>'; mths.forEach(m => ht += `<th>${m}</th>`); ht += '<th>합계</th></tr></thead><tbody>';
         hmSortedE.forEach(r => {
           ht += `<tr><td style="font-weight:700;">${r}</td>`;

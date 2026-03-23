@@ -1,4 +1,8 @@
-# 세종시 감염병 현황 대시보드 — Claude 작업 메모
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+---
 
 > 이 파일은 세션이 초기화되어도 기존 작업 내용을 복원할 수 있도록 작성된 컨텍스트 문서입니다.
 > 새 작업이 완료될 때마다 "작업 로그" 섹션을 업데이트합니다.
@@ -11,10 +15,10 @@
 |------|------|
 | **프로젝트명** | 세종시 감염병관리지원단(SJCIDC) 대시보드 웹 전환 |
 | **목적** | Tableau Public 5페이지 대시보드 → 바닐라 HTML 웹으로 전환 (라이선스 비용 제거) |
-| **주요 파일** | `dashboard.html` (단일 파일 — CSS + JS + GeoJSON 데이터 전부 내장, ~1,800줄) |
+| **주요 파일** | `dashboard.html` (단일 파일 — CSS + JS + GeoJSON 데이터 전부 내장, ~1,580줄) |
 | **GitHub** | `https://github.com/glow3855/Sejong-City-Infectious-Disease-Dashboard.git` (branch: main) |
 | **배포 예정** | GitHub Pages → sjcidc.or.kr 에 iframe 임베딩 |
-| **데이터 구조** | `rawData` = inf_disease 원시 데이터(~1만건) 하드코딩, `KR_DATA` = 전국 비교용 |
+| **데이터 구조** | `rawData` = inf_disease 원시 데이터 하드코딩 (컬럼: `신고일_yy`, `신고일_mm`, `질병급`, `감염병명`, `지역`, `성별`, `연령`), `KR_COMP_BY_YEAR` = 연도별 전국 구성비 |
 
 ---
 
@@ -57,7 +61,14 @@ const setActive = (groupSelector, activeBtn) => {
 | `syncFilterUI()` | 모든 탭 필터 UI를 filterState와 동기화 |
 | `window.renderC5(name)` | P5 감염병 상세 차트 (updateDashboard 외부에서 호출) |
 | `DISEASE_ABBREV` + `processName()` | 감염병명 축약 매핑 |
-| `initChart(id, config)` | Chart.js 래퍼 — 기존 차트 destroy 후 재생성 |
+| `initChart(id, config)` | Chart.js 래퍼 — 기존 차트 destroy 후 재생성 (`charts` 전역 객체에 인스턴스 보관) |
+| `renderMapSVG(mapData)` | GeoJSON 기반 SVG 코로플레스 지도 생성 (읍면동별 발생현황) |
+| `getTopN(arr, n)` | 감염병명별 건수 집계 후 상위 N개 반환 |
+| `window.getGlobalColor(name)` | 감염병명별 일관된 색상 반환 (`DISEASE_COLORS` 캐싱) |
+| `POP_BASE` | 세종시 전체 인구 기준값 (386,000) — 발생률 계산에 사용 |
+| `REGION_POP` | 읍면동별 인구 상수 — 발생률 계산용 |
+| `AGE_POP` | 10세 단위 연령대별 인구 상수 |
+| `KR_COMP_BY_YEAR` | 연도별(2001-2026) 전국 감염병 구성비 데이터 (%) |
 
 ---
 
@@ -81,9 +92,12 @@ const setActive = (groupSelector, activeBtn) => {
 - `.card-header` — 제목+버튼 가로 배치
 - `.btn-group` + `.btn-toggle` — 뷰모드 버튼 (active 클래스로 상태 표시)
 - `.kpi-unit` / `.kpi-unit-sm` — KPI 카드 단위 텍스트
-- `.scroll-container` — 테이블 스크롤 래퍼
-- `.rank-scroll` — P3 읍면동 순위 스크롤
+- `.scroll-container` — 테이블 스크롤 래퍼 (max-height: 600px)
+- `.rank-scroll` — P3 읍면동 순위 스크롤 (height: 500px)
 - `.hint-text` — 테이블 상단 안내 문구
+- `.map-card` / `.map-wrap` / `.rank-chart-wrap` — P3 지도 레이아웃 컨테이너
+- `.map-rgn` — SVG 지도 각 읍면동 path 요소 (data-name, data-rate, data-cnt 속성 보유)
+- `#map_tooltip` — JS로 동적 생성되는 지도 호버 툴팁 (position:fixed)
 
 ---
 
