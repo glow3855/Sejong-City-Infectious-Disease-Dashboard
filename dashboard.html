@@ -1567,7 +1567,7 @@
           const stackMax = Math.ceil(Math.max(...stackTotals) * 1.2) || 1;
           initChart('c3_top5_disease', {
             type: 'bar', data: { labels: top5rgns, datasets },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => v > 0 ? ctx.dataset.label + ' ' + v : '' }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, beginAtZero: true, max: stackMax } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: (ctx) => { const v = ctx.dataset.data[ctx.dataIndex]; const total = stackTotals[ctx.dataIndex] || 1; return v > 0 && (v / total) >= 0.15; }, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => ctx.dataset.label + ' ' + v }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, beginAtZero: true, max: stackMax } } }
           });
         }
 
@@ -1742,7 +1742,7 @@
         initChart('c4_lifecycle', {
           type: 'bar',
           data: { labels: lcKeys, datasets: c4LcDatasets },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom' }, datalabels: { display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => v > 0 ? ctx.dataset.label + ' ' + v : '' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, max: lcMax } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom' }, datalabels: { display: (ctx) => { const v = ctx.dataset.data[ctx.dataIndex]; const total = lcTotals[ctx.dataIndex] || 1; return v > 0 && (v / total) >= 0.15; }, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => ctx.dataset.label + ' ' + v }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, max: lcMax } } }
         });
       }
 
