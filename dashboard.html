@@ -925,7 +925,7 @@
         });
         const cx = (allPts.reduce((s,p)=>s+p[0],0)/allPts.length).toFixed(1);
         const cy = (allPts.reduce((s,p)=>s+p[1],0)/allPts.length).toFixed(1);
-        paths += `<path d="${pd}" fill="${color}" stroke="#94a3b8" stroke-width="0.8" class="map-rgn" data-name="${labelName}" data-rate="${d?d.rate:'-'}" data-cnt="${d?d.cnt:0}"/>`;
+        paths += `<path d="${pd}" fill="${color}" stroke="#94a3b8" stroke-width="0.8" class="map-rgn" data-name="${labelName}" data-rate="${d?d.rate:'-'}" data-cnt="${d?d.cnt:0}" data-pop="${d?d.pop.toLocaleString():'-'}"/>`;
         labelData.push({ cx: parseFloat(cx), cy: parseFloat(cy), name: labelName, value: d ? d.value : 0 });
       });
 
@@ -959,7 +959,7 @@
       }
       container.querySelectorAll('.map-rgn').forEach(el => {
         el.addEventListener('mouseenter', () => {
-          tip.innerHTML = `<div style="font-weight:700;border-bottom:1px solid #e2e8f0;padding-bottom:4px;margin-bottom:4px;">${el.dataset.name}</div>발생률: <strong style="color:#2563eb;">${el.dataset.rate}명</strong><br/>신고건수: <strong>${el.dataset.cnt}건</strong>`;
+          tip.innerHTML = `<div style="font-weight:700;border-bottom:1px solid #e2e8f0;padding-bottom:4px;margin-bottom:4px;">${el.dataset.name}</div>신고건수: <strong>${el.dataset.cnt}건</strong><br/>발생률: <strong style="color:#2563eb;">${el.dataset.rate}명</strong><br/>인구수: <strong>${el.dataset.pop}명</strong>`;
           tip.style.display = 'block';
         });
         el.addEventListener('mousemove', e => { tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-10)+'px'; });
@@ -1331,7 +1331,7 @@
             let rateText = rateVal.toFixed(1);
             let val = viewState.p3 === 'rate' ? parseFloat(rateText) : cnt;
             // Prefix '세종시 ' to match GeoJSON property name
-            mapData.push({ name: '세종시 ' + r, value: val, rate: rateText, cnt: cnt, shortName: r });
+            mapData.push({ name: '세종시 ' + r, value: val, rate: rateText, cnt: cnt, pop: REGION_POP[r], shortName: r });
           });
 
           renderMapSVG(mapData);
