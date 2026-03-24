@@ -14,9 +14,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | **GitHub** | `https://github.com/glow3855/Sejong-City-Infectious-Disease-Dashboard.git` (branch: main) |
 | **배포 예정** | GitHub Pages → sjcidc.or.kr 에 iframe 임베딩 |
 | **데이터 구조** | `rawData` = 감염병 원시 데이터 하드코딩 (컬럼: `신고일_yy`, `신고일_mm`, `질병급`, `감염병명`, `통계_emdb`, `성별`, `연령대5`), `KR_COMP_BY_YEAR` = 연도별 전국 구성비 (2001–2026) |
-| **원본 파일** | `SJCIDC_inf_disease_26.02.xlsx` — `inf_disease` 시트(rawData 원본), `sj_pop` 시트(연도별 읍면동 인구) |
+| **원본 파일** | `SJCIDC_inf_disease_26.02.xlsx` — `inf_disease` 시트(rawData 원본), `sj_pop` 시트(연도별 읍면동 인구); `kr_rep.xlsx` — 전국 대표값 참조용 (KR_RATE 등 상수 산출 원본) |
 
 **실행 방법:** 빌드 없음 — `dashboard.html`을 브라우저에서 바로 열면 됨.
+
+**Git 규칙:** 코드 편집 완료 시 반드시 `git add` → `git commit` → `git push origin main` 까지 수행한다. 사용자가 별도로 요청하지 않아도 push까지 자동 진행한다.
 
 ---
 
@@ -46,7 +48,7 @@ const viewState = { c2: 'cnt', p3: 'cnt', p4: 'cnt' };
 // baseData = rawData 를 grade + disease 로 필터링
 // filtered  = baseData 를 year + month 로 필터링
 
-// 버튼 토글 헬퍼
+// 버튼 토글 헬퍼 — updateDashboard() 내부에 정의됨 (전역 아님)
 const setActive = (groupSelector, activeBtn) => {
   document.querySelectorAll(groupSelector).forEach(b => b.classList.remove('active'));
   activeBtn.classList.add('active');
@@ -55,7 +57,7 @@ const setActive = (groupSelector, activeBtn) => {
 
 | 함수/변수 | 역할 |
 |----------|------|
-| `updateDashboard()` | 필터 변경 시 전체 리렌더 (filterState 기반) |
+| `updateDashboard()` | 필터 변경 시 현재 활성 탭만 리렌더 (`activeTab = document.querySelector('.tab.active').dataset.target`로 판별, 비활성 탭은 스킵) |
 | `syncFilterUI()` | 모든 탭 필터 UI를 filterState와 동기화 |
 | `window.renderC5(name)` | P5 감염병 상세 차트 (updateDashboard 외부에서 호출) |
 | `DISEASE_ABBREV` + `processName()` | 감염병명 축약 매핑 |
@@ -71,9 +73,16 @@ const setActive = (groupSelector, activeBtn) => {
 | `KR_COMP_BY_YEAR` | 연도별(2001-2026) 전국 감염병 구성비 데이터 (%) |
 | `KR_RATE` | 연령대별 전국 발생률 기준값 (10만명당) — P4 비교용 |
 | `sejongGeoJson` | 세종시 읍면동 GeoJSON 데이터 인라인 상수 (line ~779) |
+| `PALETTE` / `EXTENDED_PALETTE` | 차트용 색상 배열 (6색 / 15색). 감염병별 고정 색상은 `DISEASE_COLORS` 캐싱 방식의 `getGlobalColor`가 담당 |
+| `GRID_COLOR` | 차트 격자선 색상 (`#f1f5f9`) |
+| `createSparkline(id, labels, data, color, unit)` | P1 KPI 카드 아래 스파크라인 생성 헬퍼 (`initChart` 래핑) |
+| `formatSparkLabel(label)` | 스파크라인 X축 레이블 포맷 (연도.월 → 연도 또는 월 표시) |
+| `getP3Pop(r)` | P3 블록 내부 로컬 함수 — 지역명 `r`에 대해 `REGION_POP_BY_YEAR[p3Year]` 조회, 없으면 최근 연도로 폴백 |
+
+**탭 전환 패턴:** `.tab[data-target]` 클릭 → 모든 `.tab`·`.page`에서 `active` 제거 → 클릭된 `.tab`과 `document.getElementById(tab.dataset.target)` (.page)에 `active` 추가. `updateDashboard()`는 탭 전환 시에도 재호출됨.
 
 **이벤트 처리 패턴:** 필터 변경과 버튼 클릭 모두 `document` 레벨 이벤트 위임 사용.
-- 필터: `document.addEventListener('change', ...)` → `.tab-filter` 클래스 감지
+- 필터: `document.addEventListener('change', ...)` → `.tab-filter[data-key]` 감지 (`data-key`값이 `filterState` 키와 1:1 매핑)
 - 버튼: `document.addEventListener('click', ...)` → `btn.id`로 분기
 
 **초기화 흐름 (`DOMContentLoaded`):**
@@ -131,3 +140,25 @@ const setActive = (groupSelector, activeBtn) => {
 | Task 5 (미구현 기능) | 보류 | 사용자 요청으로 나중에 진행 예정 |
 | prototype.html / anti.html / index.html | 결정 대기 | 삭제 여부 미결정 |
 | GeoJSON 미포함 지역 | 미해결 | 나성동·해밀동·반곡동·어진동 등 GeoJSON 업데이트 필요 |
+
+---
+
+## 8. 커스텀 스킬 (Slash Commands)
+
+`.claude/commands/`에 4개 스킬 정의. 상세 사용법은 `skill_info.md` 참조.
+
+| 스킬 | 용도 | 사용 예시 |
+|------|------|----------|
+| `/handoff` | 세션 전환 전 `SESSION_HANDOFF.md` 갱신 | `/handoff P3 지도 작업 중` |
+| `/debug-tab [탭]` | 탭별 렌더링·데이터 흐름 진단 | `/debug-tab P3` |
+| `/add-chart [탭] [종류] [설명]` | 패턴 준수하며 새 차트 추가 | `/add-chart p2 bar 월별 누적` |
+| `/review [탭]` | 코드 리뷰 (기능·품질·데이터·UX) | `/review P4` |
+
+---
+
+## 9. 저장소 구조
+
+- `.gitignore`는 **deny-all** 방식 (`*`로 전부 무시 후 `!`로 허용)
+- Git 추적 파일: `dashboard.html`, `CLAUDE.md`, `.gitignore` 만 해당
+- `SESSION_HANDOFF.md` — `/handoff` 스킬이 생성·갱신하는 세션 간 컨텍스트 전달 파일 (Git 미추적)
+- `skill_info.md` — 스킬 사용법 문서 (Git 미추적)
