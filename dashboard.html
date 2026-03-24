@@ -731,10 +731,14 @@
         </div>
       </div>
 
-      <div class="grid-1">
+      <div class="grid-2">
+        <div class="card">
+          <h3>성별 구성비</h3>
+          <div class="chart-wrap h400"><canvas id="c4_gender_donut"></canvas></div>
+        </div>
         <div class="card">
           <h3>생애주기별 다빈도 감염병 (TOP 3)</h3>
-          <div class="chart-wrap"><canvas id="c4_lifecycle"></canvas></div>
+          <div class="chart-wrap h400"><canvas id="c4_lifecycle"></canvas></div>
         </div>
       </div>
     </div>
@@ -1470,6 +1474,32 @@
           data: { labels: lcKeys, datasets: c4LcDatasets },
           options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
         });
+
+        const mCnt = filtered.filter(d => d['성별'] === '남자').length;
+        const fCnt = filtered.filter(d => d['성별'] === '여자').length;
+        const totalCnt = mCnt + fCnt || 1;
+        initChart('c4_gender_donut', {
+          type: 'doughnut',
+          data: {
+            labels: ['남자', '여자'],
+            datasets: [{ data: [mCnt, fCnt], backgroundColor: ['#0ea5e9', '#ec4899'], borderWidth: 0 }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom' },
+              datalabels: {
+                color: '#fff',
+                font: { size: 13, weight: 'bold' },
+                formatter: (value) => {
+                  const pct = ((value / totalCnt) * 100).toFixed(1);
+                  return `${value.toLocaleString()}건\n(${pct}%)`;
+                }
+              },
+              tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw.toLocaleString()}건 (${((ctx.raw / totalCnt) * 100).toFixed(1)}%)` } }
+            }
+          }
+        });
       }
 
       if (activeTab === 'p5') {
@@ -1477,7 +1507,7 @@
         const dList = Object.keys(dGrp).sort();
         let tb = '<thead><tr><th>질병급</th><th>감염병명</th><th>건수</th></tr></thead><tbody>';
         dList.forEach(n => {
-          let c = filtered.filter(d => processName(d['감염병명']) === n).length;
+          let c = baseData.filter(d => processName(d['감염병명']) === n).length;
           tb += `<tr style="cursor:pointer;" onclick="renderC5('${n}')"><td>${dGrp[n]}</td><td style="font-weight:700; color:#003e74;">${n}</td><td style="font-weight:700;">${c}</td></tr>`;
         });
         tb += '</tbody>';
