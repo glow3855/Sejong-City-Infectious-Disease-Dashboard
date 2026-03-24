@@ -796,13 +796,17 @@
       return DISEASE_COLORS[name];
     };
 
-    const POP_BASE = 386000;
+    const POP_BASE = 391122; // 2025년 세종시 전체 인구 (sj_pop 시트 기준)
     const REGION_POP = {
-      '조치원읍': 42000, '소담동': 32000, '다정동': 28000, '보람동': 19000, '새롬동': 29000,
-      '한솔동': 18000, '나성동': 13000, '대평동': 11000, '고운동': 34000, '아름동': 23000,
-      '종촌동': 29000, '도담동': 31000, '해밀동': 8000, '반곡동': 26000, '연서면': 7000,
-      '연동면': 3000, '부강면': 6000, '금남면': 8000, '장군면': 6000, '전의면': 5000, '전동면': 3000
+      // 2025년 세종시 읍면동별 인구 (sj_pop 시트 기준)
+      '조치원읍': 40818, '소담동': 21577, '다정동': 28186, '보람동': 18755, '새롬동': 26385,
+      '한솔동': 17826, '나성동': 12992, '대평동': 11132, '고운동': 35485, '아름동': 23108,
+      '종촌동': 27590, '도담동': 24568, '해밀동': 21706, '반곡동': 28571, '연서면': 6597,
+      '연동면': 2660, '부강면': 5254, '금남면': 8057, '장군면': 6490, '전의면': 4936, '전동면': 2988,
+      '소정면': 1975, '연기면': 2355, '어진동': 11111
     };
+    // 법정동 → 행정동 매핑 (rawData의 통계_emdb가 법정동명으로 기록된 경우)
+    const EMDB_MAP = { '집현동': '반곡동', '산울동': '해밀동', '가람동': '한솔동' };
     const AGE_POP = {
       '0-4세': 20000, '5-9세': 22000, '10-14세': 23000, '15-19세': 20000,
       '20-29세': 35000, '30-39세': 65000, '40-49세': 70000, '50-59세': 50000,
@@ -1291,7 +1295,7 @@
 
 
       if (activeTab === 'p3') {
-        const emdbGrp = filtered.reduce((acc, d) => { const e = d['통계_emdb'] || '기타'; acc[e] = (acc[e] || 0) + 1; return acc; }, {});
+        const emdbGrp = filtered.reduce((acc, d) => { const raw = d['통계_emdb'] || '기타'; const e = EMDB_MAP[raw] || raw; acc[e] = (acc[e] || 0) + 1; return acc; }, {});
         const regionNames = Object.keys(REGION_POP);
 
         // Sort all 21 items
@@ -1340,7 +1344,7 @@
         let ht = '<thead><tr><th>읍면동</th>'; mths.forEach(m => ht += `<th>${m}</th>`); ht += '<th>합계</th></tr></thead><tbody>';
         hmSortedE.forEach(r => {
           ht += `<tr><td style="font-weight:700;">${r}</td>`;
-          let mC = mths.map((_, i) => p3_data.filter(d => (d['통계_emdb'] || '기타') === r && parseInt(d['신고일_mm']) === (i + 1)).length);
+          let mC = mths.map((_, i) => p3_data.filter(d => (EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타') === r && parseInt(d['신고일_mm']) === (i + 1)).length);
           let sum = mC.reduce((a, b) => a + b, 0);
           let max = Math.max(...mC) || 1;
           mC.forEach(val => {
