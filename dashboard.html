@@ -513,6 +513,43 @@
 
     /* Hint text */
     .hint-text { font-size: 13px; color: #64748b; margin-bottom: 12px; }
+
+    /* P5 Compact Table */
+    .compact-table td { padding: 6px 10px !important; }
+    .compact-table th { padding: 8px 10px !important; }
+    .compact-table .selected-row td { background: #eff6ff; border-left: 3px solid #003e74; }
+    .diff-up { color: #dc2626; font-weight: 700; }
+    .diff-down { color: #2563eb; font-weight: 700; }
+    .diff-same { color: #94a3b8; }
+    .disease-count-badge {
+      display: inline-block; background: #e2e8f0; color: #475569;
+      font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 8px;
+    }
+    .p5-scroll-compact { max-height: 350px; }
+    .th-sortable { cursor: pointer; user-select: none; }
+    .th-sortable:hover { background: #e2e8f0; }
+
+    /* P4 Gender Summary */
+    .p4-gender-card { position: relative; }
+    .p4-mini-donut-wrap {
+      position: absolute; top: 60px; left: 24px; width: 120px; height: 120px; z-index: 2;
+    }
+    .p4-butterfly-offset { padding-left: 80px; }
+    @media (max-width: 1024px) {
+      .p4-mini-donut-wrap { position: static; margin: 0 auto 12px; }
+      .p4-butterfly-offset { padding-left: 0; }
+    }
+
+    /* P3 KPI Panel */
+    .p3-summary-kpi {
+      display: flex; gap: 12px; margin-bottom: 12px;
+    }
+    .p3-mini-stat {
+      flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+      padding: 8px 12px; text-align: center;
+    }
+    .p3-mini-stat .stat-label { font-size: 11px; color: #64748b; font-weight: 600; }
+    .p3-mini-stat .stat-value { font-size: 18px; font-weight: 800; color: #0f172a; }
   </style>
 </head>
 
@@ -674,11 +711,28 @@
               <button id="btn_p3_rate" class="btn-toggle">발생률</button>
             </div>
           </div>
+          <div class="p3-summary-kpi">
+            <div class="p3-mini-stat"><div class="stat-label">발생 지역</div><div class="stat-value" id="p3_kpi_regions">-</div></div>
+            <div class="p3-mini-stat"><div class="stat-label">총 건수</div><div class="stat-value" id="p3_kpi_total">-</div></div>
+            <div class="p3-mini-stat"><div class="stat-label">평균 발생률</div><div class="stat-value" id="p3_kpi_avg_rate">-</div></div>
+          </div>
           <div class="rank-scroll">
             <div class="chart-wrap rank-chart-wrap">
               <canvas id="c3_rank_bar"></canvas>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 id="c3_top5_title">주요 읍면동 다빈도 감염병 (TOP 5)</h3>
+          <div class="chart-wrap h400"><canvas id="c3_top5_disease"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>읍면동별 전년동기 대비</h3>
+          <div id="c3_yoy_placeholder" style="display:none;padding:40px;text-align:center;color:#94a3b8;font-size:14px;">연도를 선택하면 전년 대비 현황이 표시됩니다.</div>
+          <div class="chart-wrap h400"><canvas id="c3_yoy_bar"></canvas></div>
         </div>
       </div>
 
@@ -705,11 +759,7 @@
       </div>
 
       <div class="grid-2">
-        <div class="card">
-          <h3>연령대별 발생률 (인구 10만명당)</h3>
-          <div class="chart-wrap h400"><canvas id="c4_age_rate"></canvas></div>
-        </div>
-        <div class="card">
+        <div class="card p4-gender-card">
           <div class="card-header">
             <h3>성별·연령별 발생분포</h3>
             <div class="btn-group" id="p4_butterfly_toggle">
@@ -717,28 +767,22 @@
               <button id="btn_p4_rate" class="btn-toggle" data-mode="rate">발생률</button>
             </div>
           </div>
-          <div class="summary-stats">
-            <div class="stat-item">
-              <span class="stat-label">남성 총계:</span>
-              <span class="stat-val" id="p4_m_total">-</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">여성 총계:</span>
-              <span class="stat-val" id="p4_f_total">-</span>
-            </div>
-          </div>
-          <div class="chart-wrap h400"><canvas id="c4_butterfly"></canvas></div>
+          <div class="p4-mini-donut-wrap"><canvas id="c4_mini_donut"></canvas></div>
+          <div class="chart-wrap h400 p4-butterfly-offset"><canvas id="c4_gender_age"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>연령대별 발생률 (전국 비교)</h3>
+          <div class="chart-wrap h400"><canvas id="c4_age_rate_compare"></canvas></div>
         </div>
       </div>
 
       <div class="grid-2">
         <div class="card">
-          <h3>성별 구성비</h3>
-          <div class="chart-wrap h400"><canvas id="c4_gender_donut"></canvas></div>
-        </div>
-        <div class="card">
           <h3>생애주기별 다빈도 감염병 (TOP 3)</h3>
           <div class="chart-wrap h400"><canvas id="c4_lifecycle"></canvas></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;">
+          <p>향후 확장 가능 영역</p>
         </div>
       </div>
     </div>
@@ -755,10 +799,10 @@
 
       <div class="grid-1">
         <div class="card">
-          <h3>감염병 신고현황 (질병급별)</h3>
-          <p class="hint-text">행을 클릭하면 하단 연도별/월별 그래프가 해당 질병으로 업데이트됩니다.</p>
-          <div class="scroll-container">
-            <table class="data-table"><thead></thead><tbody></tbody></table>
+          <h3>감염병 신고현황 <span id="p5_disease_count" class="disease-count-badge"></span></h3>
+          <p class="hint-text">행을 클릭하면 하단 차트가 해당 질병으로 업데이트됩니다.</p>
+          <div class="scroll-container p5-scroll-compact">
+            <table class="data-table compact-table" id="p5_table"><thead></thead><tbody></tbody></table>
           </div>
         </div>
       </div>
@@ -771,6 +815,17 @@
         <div class="card">
           <h3>연도별·월별 신고현황</h3>
           <div class="chart-wrap"><canvas id="c5_month"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>선택 감염병 연령분포</h3>
+          <div class="chart-wrap"><canvas id="c5_age_dist"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>선택 감염병 지역분포 (TOP 10)</h3>
+          <div class="chart-wrap"><canvas id="c5_region_dist"></canvas></div>
         </div>
       </div>
     </div>
@@ -1372,6 +1427,74 @@
         });
         ht += '</tbody>';
         document.getElementById('table_heatmap').innerHTML = ht;
+
+        // P3 KPI 패널 업데이트
+        const regionsWithCases = Object.keys(emdbGrp).filter(e => REGION_POP[e] && emdbGrp[e] > 0).length;
+        const totalP3 = filtered.filter(d => { const raw = d['통계_emdb'] || '기타'; const e = EMDB_MAP[raw] || raw; return REGION_POP[e]; }).length;
+        const allRates = regionNames.map(r => ((emdbGrp[r] || 0) / getP3Pop(r)) * 100000);
+        const avgRate = regionsWithCases > 0 ? (allRates.reduce((a, b) => a + b, 0) / regionNames.length).toFixed(1) : '0';
+        if (document.getElementById('p3_kpi_regions')) document.getElementById('p3_kpi_regions').textContent = regionsWithCases + '개';
+        if (document.getElementById('p3_kpi_total')) document.getElementById('p3_kpi_total').textContent = totalP3.toLocaleString() + '건';
+        if (document.getElementById('p3_kpi_avg_rate')) document.getElementById('p3_kpi_avg_rate').textContent = avgRate;
+
+        // c3_top5_disease: 주요 읍면동 다빈도 감염병
+        const p3SelRegion = window._p3SelectedRegion || null;
+        const top5title = document.getElementById('c3_top5_title');
+        if (p3SelRegion) {
+          if (top5title) top5title.textContent = p3SelRegion + ' 다빈도 감염병 (TOP 10)';
+          const rgnData = filtered.filter(d => { const raw = d['통계_emdb'] || '기타'; return (EMDB_MAP[raw] || raw) === p3SelRegion; });
+          const rgnTop = getTopN(rgnData, 10);
+          initChart('c3_top5_disease', {
+            type: 'bar', data: { labels: rgnTop.map(x => x[0]), datasets: [{ label: p3SelRegion, data: rgnTop.map(x => x[1]), backgroundColor: rgnTop.map(x => window.getGlobalColor(x[0])), borderRadius: 4 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          });
+        } else {
+          if (top5title) top5title.textContent = '주요 읍면동 다빈도 감염병 (TOP 5)';
+          const top5rgns = sortedE.filter(e => emdbGrp[e] > 0).slice(0, 5);
+          const allDiseases = new Set();
+          const rgnDiseaseMap = {};
+          top5rgns.forEach(r => {
+            const rgnData = filtered.filter(d => { const raw = d['통계_emdb'] || '기타'; return (EMDB_MAP[raw] || raw) === r; });
+            const top = getTopN(rgnData, 5);
+            rgnDiseaseMap[r] = Object.fromEntries(top);
+            top.forEach(x => allDiseases.add(x[0]));
+          });
+          const diseaseList = Array.from(allDiseases);
+          const datasets = diseaseList.map(dis => ({
+            label: dis, data: top5rgns.map(r => rgnDiseaseMap[r][dis] || 0), backgroundColor: window.getGlobalColor(dis), borderRadius: 4
+          }));
+          initChart('c3_top5_disease', {
+            type: 'bar', data: { labels: top5rgns, datasets },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          });
+        }
+
+        // c3_yoy_bar: 전년동기 대비
+        const yoyPlaceholder = document.getElementById('c3_yoy_placeholder');
+        const yoyCanvas = document.getElementById('c3_yoy_bar');
+        if (filterState.year === '전체') {
+          if (yoyPlaceholder) yoyPlaceholder.style.display = 'block';
+          if (yoyCanvas) yoyCanvas.style.display = 'none';
+          if (charts['c3_yoy_bar']) { charts['c3_yoy_bar'].destroy(); delete charts['c3_yoy_bar']; }
+        } else {
+          if (yoyPlaceholder) yoyPlaceholder.style.display = 'none';
+          if (yoyCanvas) yoyCanvas.style.display = '';
+          const curY = filterState.year;
+          const prevY = (parseInt(curY) - 1).toString();
+          const curMonth = filterState.month !== '전체' ? parseInt(filterState.month.replace('월', '')) : null;
+          const curFiltered = baseData.filter(d => d['신고일_yy'] === curY && (!curMonth || parseInt(d['신고일_mm']) === curMonth));
+          const prevFiltered = baseData.filter(d => d['신고일_yy'] === prevY && (!curMonth || parseInt(d['신고일_mm']) === curMonth));
+          const curRgn = {}; curFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (REGION_POP[e]) curRgn[e] = (curRgn[e] || 0) + 1; });
+          const prevRgn = {}; prevFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (REGION_POP[e]) prevRgn[e] = (prevRgn[e] || 0) + 1; });
+          const yoyLabels = Object.keys(curRgn).sort((a, b) => (curRgn[b] || 0) - (curRgn[a] || 0)).slice(0, 10);
+          initChart('c3_yoy_bar', {
+            type: 'bar', data: { labels: yoyLabels, datasets: [
+              { label: curY + '년', data: yoyLabels.map(r => curRgn[r] || 0), backgroundColor: PALETTE[0], borderRadius: 4 },
+              { label: prevY + '년', data: yoyLabels.map(r => prevRgn[r] || 0), backgroundColor: '#cbd5e1', borderRadius: 4 }
+            ] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, datalabels: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
+          });
+        }
       }
 
       if (activeTab === 'p4') {
@@ -1390,11 +1513,8 @@
         let mAge = ageKeys.map(a => filtered.filter(d => d['성별'] === '남자' && ageGroup10[a].some(subA => String(d['연령대5'] || '').replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-').includes(subA.replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-')))).length);
         let fAge = ageKeys.map(a => filtered.filter(d => d['성별'] === '여자' && ageGroup10[a].some(subA => String(d['연령대5'] || '').replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-').includes(subA.replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-')))).length);
 
-        // Update Totals Dashboard
         const mTotal = mAge.reduce((a, b) => a + b, 0);
         const fTotal = fAge.reduce((a, b) => a + b, 0);
-        if (document.getElementById('p4_m_total')) document.getElementById('p4_m_total').innerText = mTotal.toLocaleString();
-        if (document.getElementById('p4_f_total')) document.getElementById('p4_f_total').innerText = fTotal.toLocaleString();
 
         let displayM = mAge.map(v => -v);
         let displayF = fAge;
@@ -1415,7 +1535,7 @@
         const maxVal = Math.max(...displayM.map(v => Math.abs(v)), ...displayF.map(v => Math.abs(v)));
         const axisLimit = maxVal * 1.2 || 1;
 
-        initChart('c4_butterfly', {
+        initChart('c4_gender_age', {
           type: 'bar',
           data: { labels: ageKeys, datasets: [{ label: '남자', data: displayM, backgroundColor: '#0ea5e9', borderRadius: 20, barThickness: 10, borderSkipped: false }, { label: '여자', data: displayF, backgroundColor: '#ec4899', borderRadius: 20, barThickness: 10, borderSkipped: false }] },
           options: {
@@ -1423,7 +1543,7 @@
             plugins: {
               legend: { position: 'top' },
               datalabels: { display: false },
-              tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.abs(c.raw).toFixed(viewState.p4 === 'rate' ? 1 : 0)}${unit} (10만명당)` } }
+              tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.abs(c.raw).toFixed(viewState.p4 === 'rate' ? 1 : 0)}${unit}${viewState.p4 === 'rate' ? ' (10만명당)' : ''}` } }
             },
             scales: {
               x: {
@@ -1436,13 +1556,49 @@
           }
         });
 
+        // 미니 도넛 (성별 구성비)
+        initChart('c4_mini_donut', {
+          type: 'doughnut',
+          data: { labels: ['남', '여'], datasets: [{ data: [mTotal, fTotal], backgroundColor: ['#0ea5e9', '#ec4899'], borderWidth: 0 }] },
+          options: {
+            responsive: true, maintainAspectRatio: true, cutout: '55%',
+            plugins: {
+              legend: { display: false },
+              datalabels: {
+                color: '#fff', font: { size: 10, weight: 'bold' },
+                formatter: (value) => { const pct = ((value / (mTotal + fTotal || 1)) * 100).toFixed(0); return pct + '%'; }
+              },
+              tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw.toLocaleString()}건 (${((ctx.raw / (mTotal + fTotal || 1)) * 100).toFixed(1)}%)` } }
+            }
+          }
+        });
+
+        // 연령대별 발생률 전국 비교
         const rates = ageKeys.map((a, i) => {
           let pop = ageGroup10[a].reduce((sum, sub) => sum + (AGE_POP[sub] || 0), 0);
-          return (((mAge[i] + fAge[i]) / (pop || 1)) * 100000).toFixed(1);
+          return parseFloat((((mAge[i] + fAge[i]) / (pop || 1)) * 100000).toFixed(1));
         });
-        initChart('c4_age_rate', {
-          type: 'bar', data: { labels: ageKeys, datasets: [{ label: '발생률', data: rates, backgroundColor: PALETTE[0], borderRadius: 4, barThickness: 30 }] },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `발생률: ${ctx.raw}명 (10만명당)` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
+        // KR_RATE 10세 단위 변환
+        const krRateKeys5 = Object.keys(KR_RATE);
+        const krRates10 = ageKeys.map(a => {
+          const subs = ageGroup10[a].filter(s => KR_RATE[s] !== undefined);
+          if (subs.length === 0) {
+            // 10세 단위 키로 직접 매칭 시도 (예: '20-29세')
+            const altKey = a.replace('~', '-');
+            return KR_RATE[altKey] || 0;
+          }
+          return subs.reduce((s, k) => s + KR_RATE[k], 0) / subs.length;
+        });
+        initChart('c4_age_rate_compare', {
+          type: 'bar',
+          data: {
+            labels: ageKeys,
+            datasets: [
+              { label: '세종시', data: rates, backgroundColor: PALETTE[0], borderRadius: 4, barThickness: 24, order: 2 },
+              { label: '전국', data: krRates10, type: 'line', borderColor: '#ef4444', backgroundColor: '#ef444433', borderWidth: 2, borderDash: [6, 3], pointStyle: 'circle', pointRadius: 4, pointBackgroundColor: '#ef4444', fill: false, order: 1 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${typeof ctx.raw === 'number' ? ctx.raw.toFixed(1) : ctx.raw}명 (10만명당)` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
         });
 
         const lcMap = {
@@ -1472,51 +1628,58 @@
         initChart('c4_lifecycle', {
           type: 'bar',
           data: { labels: lcKeys, datasets: c4LcDatasets },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
-        });
-
-        const mCnt = filtered.filter(d => d['성별'] === '남자').length;
-        const fCnt = filtered.filter(d => d['성별'] === '여자').length;
-        const totalCnt = mCnt + fCnt || 1;
-        initChart('c4_gender_donut', {
-          type: 'doughnut',
-          data: {
-            labels: ['남자', '여자'],
-            datasets: [{ data: [mCnt, fCnt], backgroundColor: ['#0ea5e9', '#ec4899'], borderWidth: 0 }]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'bottom' },
-              datalabels: {
-                color: '#fff',
-                font: { size: 13, weight: 'bold' },
-                formatter: (value) => {
-                  const pct = ((value / totalCnt) * 100).toFixed(1);
-                  return `${value.toLocaleString()}건\n(${pct}%)`;
-                }
-              },
-              tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw.toLocaleString()}건 (${((ctx.raw / totalCnt) * 100).toFixed(1)}%)` } }
-            }
-          }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom' }, datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
         });
       }
 
       if (activeTab === 'p5') {
+        window._p5BaseData = baseData;
         const dGrp = baseData.reduce((acc, d) => { const n = processName(d['감염병명']); if (!acc[n]) acc[n] = d['질병급'] + '급'; return acc; }, {});
-        const dList = Object.keys(dGrp).sort();
-        let tb = '<thead><tr><th>질병급</th><th>감염병명</th><th>건수</th></tr></thead><tbody>';
-        dList.forEach(n => {
-          let c = baseData.filter(d => processName(d['감염병명']) === n).length;
-          tb += `<tr style="cursor:pointer;" onclick="renderC5('${n}')"><td>${dGrp[n]}</td><td style="font-weight:700; color:#003e74;">${n}</td><td style="font-weight:700;">${c}</td></tr>`;
+        const totalCnt = baseData.length || 1;
+        // 전년대비 계산용
+        const curYear = filterState.year !== '전체' ? filterState.year : null;
+        const prevYear = curYear ? (parseInt(curYear) - 1).toString() : null;
+        const prevGradeBase = prevYear ? (filterState.grade !== '전체'
+          ? rawData.filter(d => d['신고일_yy'] === prevYear && d['질병급'] === filterState.grade.replace('급', ''))
+          : rawData.filter(d => d['신고일_yy'] === prevYear)) : null;
+
+        // 건수 집계
+        const dCounts = {};
+        baseData.forEach(d => { const n = processName(d['감염병명']); dCounts[n] = (dCounts[n] || 0) + 1; });
+        const dList = Object.keys(dCounts).sort((a, b) => dCounts[b] - dCounts[a]);
+
+        // 배지
+        const badge = document.getElementById('p5_disease_count');
+        if (badge) badge.textContent = dList.length + '개';
+
+        let tb = '<thead><tr><th class="th-sortable" data-col="grade">질병급</th><th class="th-sortable" data-col="name">감염병명</th><th class="th-sortable" data-col="cnt">건수</th>' +
+          '<th class="th-sortable" data-col="diff">전년대비</th><th class="th-sortable" data-col="share">점유율</th></tr></thead><tbody>';
+        dList.forEach((n, i) => {
+          const c = dCounts[n];
+          const share = (c / totalCnt * 100).toFixed(1);
+          let diffHtml = '-';
+          if (prevGradeBase) {
+            const pc = prevGradeBase.filter(d => processName(d['감염병명']) === n).length;
+            const diff = c - pc;
+            if (diff > 0) diffHtml = `<span class="diff-up">▲ ${diff}</span>`;
+            else if (diff < 0) diffHtml = `<span class="diff-down">▼ ${Math.abs(diff)}</span>`;
+            else diffHtml = `<span class="diff-same">-</span>`;
+          }
+          const sel = i === 0 ? ' class="selected-row"' : '';
+          tb += `<tr${sel} style="cursor:pointer;" onclick="renderC5('${n}', this)"><td>${dGrp[n]}</td><td style="font-weight:700; color:#003e74;">${n}</td><td style="font-weight:700;">${c.toLocaleString()}</td><td>${diffHtml}</td><td>${share}%</td></tr>`;
         });
         tb += '</tbody>';
-        document.querySelector('#p5 .data-table').innerHTML = tb;
+        document.getElementById('p5_table').innerHTML = tb;
         if (dList.length > 0) renderC5(dList[0]);
       }
     }
 
-    window.renderC5 = function (name) {
+    window.renderC5 = function (name, clickedRow) {
+      // 선택 행 하이라이트
+      document.querySelectorAll('#p5_table .selected-row').forEach(r => r.classList.remove('selected-row'));
+      if (clickedRow) clickedRow.classList.add('selected-row');
+      else { const first = document.querySelector('#p5_table tbody tr'); if (first) first.classList.add('selected-row'); }
+
       // Apply grade filter (P5 has grade filter); c5_trend shows full historical trend regardless of year
       const gradeBase = filterState.grade !== '전체'
         ? rawData.filter(d => d['질병급'] === filterState.grade.replace('급', ''))
@@ -1525,29 +1688,47 @@
       const yearGrp = dOnly.reduce((acc, d) => { acc[d['신고일_yy']] = (acc[d['신고일_yy']] || 0) + 1; return acc; }, {});
       const years = Object.keys(yearGrp).sort().slice(-7);
       initChart('c5_trend', {
-        type: 'line', data: { labels: years, datasets: [{ label: name + ' 건수', data: years.map(y => yearGrp[y] || 0), borderColor: PALETTE[0], backgroundColor: PALETTE[0] + '33', fill: true, tension: 0.3, pointRadius: 4 }] },
+        type: 'line', data: { labels: years, datasets: [{ label: name + ' 건수', data: years.map(y => yearGrp[y] || 0), borderColor: PALETTE[0], backgroundColor: PALETTE[0] + '33', fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 8 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
       });
 
       const mths = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
       const allYears = [...new Set(rawData.map(d => d['신고일_yy']))].sort();
-      // If year filter is set, show only that year; otherwise show last 3 years
       const targetYears = filterState.year !== '전체' ? [filterState.year] : allYears.slice(-3);
       let c5Datasets = targetYears.map((yr, idx) => {
         let mData = mths.map((_, i) => dOnly.filter(d => d['신고일_yy'] === yr && parseInt(d['신고일_mm']) === (i + 1)).length);
-        return {
-          label: yr + '년',
-          data: mData,
-          borderColor: PALETTE[idx % PALETTE.length],
-          backgroundColor: PALETTE[idx % PALETTE.length],
-          tension: 0.3,
-          fill: false
-        };
+        return { label: yr + '년', data: mData, borderColor: PALETTE[idx % PALETTE.length], backgroundColor: PALETTE[idx % PALETTE.length], tension: 0.3, fill: false };
       });
       initChart('c5_month', {
-        type: 'line',
-        data: { labels: mths, datasets: c5Datasets },
+        type: 'line', data: { labels: mths, datasets: c5Datasets },
         options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label} ${ctx.label}: ${ctx.raw}건` } } }, scales: { y: { beginAtZero: true, grid: { color: GRID_COLOR } }, x: { grid: { display: false } } } }
+      });
+
+      // c5_age_dist: 연령분포
+      const ageKeys10 = ['0~9세','10~19세','20~29세','30~39세','40~49세','50~59세','60~69세','70~79세','80세이상'];
+      const ageMap10 = { '0~9세':['0-4세','5-9세','0-9세'], '10~19세':['10-14세','15-19세','10-19세'], '20~29세':['20-24세','25-29세','20-29세'], '30~39세':['30-34세','35-39세','30-39세'], '40~49세':['40-44세','45-49세','40-49세'], '50~59세':['50-54세','55-59세','50-59세'], '60~69세':['60-64세','65-69세','60-69세'], '70~79세':['70-74세','75-79세','70-79세'], '80세이상':['80세이상','80세 이상','80이상'] };
+      const baseForAge = (window._p5BaseData || gradeBase).filter(d => processName(d['감염병명']) === name);
+      const ageCnts = ageKeys10.map(ag => {
+        const subs = ageMap10[ag];
+        return baseForAge.filter(d => { const a = (d['연령대5']||'').replace(/\s+/g,'').replace(/세/g,'세').replace(/[~ㅡ]/g,'-'); return subs.some(s => a.includes(s.replace(/\s+/g,''))); }).length;
+      });
+      const diseaseColor = window.getGlobalColor(name);
+      initChart('c5_age_dist', {
+        type: 'bar', data: { labels: ageKeys10, datasets: [{ label: name, data: ageCnts, backgroundColor: diseaseColor, borderRadius: 4 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+      });
+
+      // c5_region_dist: 지역분포 TOP 10
+      const regionCnts = {};
+      baseForAge.forEach(d => {
+        const raw = d['통계_emdb'] || '기타';
+        const e = EMDB_MAP[raw] || raw;
+        if (REGION_POP[e]) regionCnts[e] = (regionCnts[e] || 0) + 1;
+      });
+      const regionSorted = Object.entries(regionCnts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      initChart('c5_region_dist', {
+        type: 'bar', data: { labels: regionSorted.map(r => r[0]), datasets: [{ label: name, data: regionSorted.map(r => r[1]), backgroundColor: PALETTE[0], borderRadius: 4 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v ? v + '건' : '' }, tooltip: { callbacks: { label: ctx => `${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
       });
     };
 
@@ -1596,6 +1777,26 @@
     });
 
     // --- Toggle Event Listeners ---
+    // P3 지도 클릭 인터랙션
+    window._p3SelectedRegion = null;
+    document.addEventListener('click', (e) => {
+      const mapRgn = e.target.closest('.map-rgn');
+      if (mapRgn) {
+        const name = mapRgn.getAttribute('data-name');
+        if (window._p3SelectedRegion === name) {
+          window._p3SelectedRegion = null;
+          document.querySelectorAll('.map-rgn').forEach(p => { p.style.strokeWidth = ''; p.style.stroke = ''; });
+        } else {
+          window._p3SelectedRegion = name;
+          document.querySelectorAll('.map-rgn').forEach(p => { p.style.strokeWidth = ''; p.style.stroke = ''; });
+          mapRgn.style.strokeWidth = '2.5px';
+          mapRgn.style.stroke = '#003e74';
+        }
+        updateDashboard();
+        return;
+      }
+    });
+
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('button');
       if (!btn) return;
