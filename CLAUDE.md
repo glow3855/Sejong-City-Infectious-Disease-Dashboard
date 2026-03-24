@@ -14,6 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | **GitHub** | `https://github.com/glow3855/Sejong-City-Infectious-Disease-Dashboard.git` (branch: main) |
 | **배포 예정** | GitHub Pages → sjcidc.or.kr 에 iframe 임베딩 |
 | **데이터 구조** | `rawData` = 감염병 원시 데이터 하드코딩 (컬럼: `신고일_yy`, `신고일_mm`, `질병급`, `감염병명`, `통계_emdb`, `성별`, `연령대5`), `KR_COMP_BY_YEAR` = 연도별 전국 구성비 (2001–2026) |
+| **원본 파일** | `SJCIDC_inf_disease_26.02.xlsx` — `inf_disease` 시트(rawData 원본), `sj_pop` 시트(연도별 읍면동 인구) |
 
 **실행 방법:** 빌드 없음 — `dashboard.html`을 브라우저에서 바로 열면 됨.
 
@@ -62,8 +63,10 @@ const setActive = (groupSelector, activeBtn) => {
 | `renderMapSVG(mapData)` | GeoJSON 기반 SVG 코로플레스 지도 생성 (읍면동별 발생현황) |
 | `getTopN(arr, n)` | 감염병명별 건수 집계 후 상위 N개 반환 |
 | `window.getGlobalColor(name)` | 감염병명별 일관된 색상 반환 (`DISEASE_COLORS` 캐싱) |
-| `POP_BASE` | 세종시 전체 인구 기준값 (386,000) — 발생률 계산에 사용 |
-| `REGION_POP` | 읍면동별 인구 상수 — 발생률 계산용 |
+| `POP_BASE` | 세종시 전체 인구 기준값 (391,122 — 2025년 기준) — 발생률 계산에 사용 |
+| `REGION_POP` | 읍면동별 인구 상수 (2025년 기준, 24개 지역) — 폴백용 |
+| `REGION_POP_BY_YEAR` | 연도별(2012-2026) 읍면동 인구 (`sj_pop` 시트 기준) — P3 발생률·tooltip에 사용 |
+| `EMDB_MAP` | 법정동→행정동 매핑 (`집현동→반곡동`, `산울동→해밀동`, `가람동→한솔동`) — rawData의 통계_emdb가 법정동명으로 기록된 경우 처리 |
 | `AGE_POP` | 10세 단위 연령대별 인구 상수 |
 | `KR_COMP_BY_YEAR` | 연도별(2001-2026) 전국 감염병 구성비 데이터 (%) |
 | `KR_RATE` | 연령대별 전국 발생률 기준값 (10만명당) — P4 비교용 |
@@ -88,7 +91,7 @@ const setActive = (groupSelector, activeBtn) => {
 |----|---------|---------|---------|
 | P1 주요 발생현황 | `#p1` | 연도+월+질병급+감염병명 | KPI 카드 + 스파크라인 |
 | P2 연도별·월별 | `#p2` | 연도+월+질병급+감염병명 | 뷰모드 토글: 신고건수/발생률 |
-| P3 읍면동별 | `#p3` | 연도+월만 | grade/disease 필터 미노출 (의도적); SVG 지도 + 순위 차트 |
+| P3 읍면동별 | `#p3` | 연도+월만 | grade/disease 필터 미노출 (의도적); SVG 지도 + 순위 차트; 인구는 `getP3Pop(r)` 헬퍼로 연도별 동적 조회 |
 | P4 인구집단별 | `#p4` | 연도+월+질병급+감염병명 | 뷰모드 토글 있음 |
 | P5 감염병별 | `#p5` | 연도+질병급만 | month 필터 미노출; 테이블 행 클릭 → renderC5 연동 |
 
@@ -106,14 +109,25 @@ const setActive = (groupSelector, activeBtn) => {
 - `.rank-scroll` — P3 읍면동 순위 스크롤 (height: 500px)
 - `.hint-text` — 테이블 상단 안내 문구
 - `.map-card` / `.map-wrap` / `.rank-chart-wrap` — P3 지도 레이아웃 컨테이너
-- `.map-rgn` — SVG 지도 각 읍면동 path 요소 (data-name, data-rate, data-cnt 속성 보유)
+- `.map-rgn` — SVG 지도 각 읍면동 path 요소 (`data-name`, `data-rate`, `data-cnt`, `data-pop` 속성 보유)
 - `#map_tooltip` — JS로 동적 생성되는 지도 호버 툴팁 (position:fixed)
 
 ---
 
-## 6. 미완성 / 보류 항목
+## 6. 데이터 검증 참고사항
+
+- **rawData vs Excel 일치 여부**: `SJCIDC_inf_disease_26.02.xlsx`의 `inf_disease` 시트와 비교 시 실질적으로 완전 일치 (Excel 일부 셀에 trailing space 있으나 값 동일)
+- **P3 외지 데이터 제외**: rawData의 `통계_emdb`가 세종시 외 지역(예: 충청남도 공주시, 대전광역시)인 경우 `REGION_POP`에 없어 P3 집계에서 제외됨 — 의도된 동작
+- **GeoJSON 미포함 지역**: 나성동·해밀동·반곡동·어진동·집현동·산울동은 rawData에 데이터가 있으나 `sejongGeoJson`에 없어 지도에 표시 안 됨 (미해결 — GeoJSON 업데이트 필요)
+- **법정동 기록 주의**: rawData의 `통계_emdb`에 집현동(→반곡동)·산울동(→해밀동)·가람동(→한솔동)이 법정동명으로 기록된 경우 있음 → `EMDB_MAP`으로 집계 시 행정동으로 변환
+- **`REGION_POP_BY_YEAR` 연도 범위**: 2012~2026년. 특정 연도에 존재하지 않는 지역(신설 행정동)은 가장 최근 연도 값으로 폴백
+
+---
+
+## 7. 미완성 / 보류 항목
 
 | 항목 | 상태 | 비고 |
 |------|------|------|
 | Task 5 (미구현 기능) | 보류 | 사용자 요청으로 나중에 진행 예정 |
 | prototype.html / anti.html / index.html | 결정 대기 | 삭제 여부 미결정 |
+| GeoJSON 미포함 지역 | 미해결 | 나성동·해밀동·반곡동·어진동 등 GeoJSON 업데이트 필요 |
