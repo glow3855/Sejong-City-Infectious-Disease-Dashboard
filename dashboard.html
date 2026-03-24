@@ -1246,6 +1246,16 @@
       }
       let k4_spark = k3_spark.map(v => ((v / POP_BASE) * 100000).toFixed(1));
 
+      // 누적 발생률 스파크라인용 — 각 월 시점까지의 해당 연도 누적 발생률
+      let k_acc_spark = [];
+      for (let i = 5; i >= 0; i--) {
+        let cM = parseInt(tm) - i;
+        let cY = parseInt(ty);
+        while (cM <= 0) { cM += 12; cY -= 1; }
+        const accCnt = baseData.filter(d => d['신고일_yy'] === cY.toString() && parseInt(d['신고일_mm']) <= cM).length;
+        k_acc_spark.push(((accCnt / POP_BASE) * 100000).toFixed(1));
+      }
+
       const formatDiff = (d, unit) => {
         if (d > 0) return `<span class="sub-val up">▲ ${d}${unit}</span>`;
         if (d < 0) return `<span class="sub-val down">▼ ${Math.abs(d)}${unit}</span>`;
@@ -1275,6 +1285,8 @@
 
       createSparkline('k1_spark', k3_labels, k3_spark, '#dc2626', '건');
       createSparkline('k2_spark', k3_labels, k4_spark, '#2563eb', '명');
+      createSparkline('k3_spark', k3_labels, k4_spark, '#dc2626', '명');
+      createSparkline('k4_spark', k3_labels, k_acc_spark, '#2563eb', '명');
 
       const activeTab = document.querySelector('.tab.active').dataset.target;
 
@@ -1287,10 +1299,11 @@
 
       if (activeTab === 'p1') {
         const top5 = getTopN(timeFiltered, 5);
+        const top5Max = Math.max(...top5.map(x => x[1]));
         initChart('c1_top5', {
           type: 'bar',
-          data: { labels: top5.map(x => x[0]), datasets: [{ data: top5.map(x => x[1]), backgroundColor: PALETTE[0], borderRadius: 4, barThickness: 40 }] },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: '#0f172a', font: { weight: 'bold' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          data: { labels: top5.map(x => x[0]), datasets: [{ data: top5.map(x => x[1]), backgroundColor: top5.map(x => window.getGlobalColor(x[0])), borderRadius: 4, barThickness: 40 }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: '#0f172a', font: { weight: 'bold' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: Math.ceil(top5Max * 1.2) } } }
         });
 
         // For c1_comp, we apply the year filter so the chart matches the dynamically updated year title
