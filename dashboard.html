@@ -838,8 +838,12 @@
         <h2 class="page-title">인구집단별 발생현황</h2>
       </div>
 
-      <div class="grid-2">
-        <div class="card p4-gender-card">
+      <div class="grid grid-31">
+        <div class="card">
+          <h3>성별 발생분포</h3>
+          <div class="chart-wrap h400"><canvas id="c4_mini_donut"></canvas></div>
+        </div>
+        <div class="card">
           <div class="card-header">
             <h3>성별·연령별 발생분포</h3>
             <div class="btn-group" id="p4_butterfly_toggle">
@@ -847,24 +851,20 @@
               <button id="btn_p4_rate" class="btn-toggle" data-mode="rate">발생률</button>
             </div>
           </div>
-          <div class="p4-mini-donut-wrap"><canvas id="c4_mini_donut"></canvas></div>
-          <div class="chart-wrap h400 p4-butterfly-offset"><canvas id="c4_gender_age"></canvas></div>
+          <div class="chart-wrap h400"><canvas id="c4_gender_age"></canvas></div>
         </div>
+      </div>
+
+      <div class="grid grid-2">
         <div class="card">
           <h3>연령대별 발생률 (전국 비교)</h3>
           <div class="chart-wrap h400"><canvas id="c4_age_rate_compare"></canvas></div>
         </div>
-      </div>
-
-      <div class="grid-2">
         <div class="card">
           <h3>생애주기별 다빈도 감염병 (TOP 3)</h3>
           <div class="chart-wrap h400"><canvas id="c4_lifecycle"></canvas></div>
         </div>
-        <div class="card" style="display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;">
-          <p>향후 확장 가능 영역</p>
-        </div>
-        </div>
+      </div>
       </div>
     </div>
 
@@ -1636,40 +1636,46 @@
         }
 
         const maxVal = Math.max(...displayM.map(v => Math.abs(v)), ...displayF.map(v => Math.abs(v)));
-        const axisLimit = maxVal * 1.2 || 1;
+        const axisLimit = maxVal * 1.4 || 1;
+        const p4dec = viewState.p4 === 'rate' ? 1 : 0;
 
         initChart('c4_gender_age', {
           type: 'bar',
-          data: { labels: ageKeys, datasets: [{ label: '남자', data: displayM, backgroundColor: '#0ea5e9', borderRadius: 20, barThickness: 10, borderSkipped: false }, { label: '여자', data: displayF, backgroundColor: '#ec4899', borderRadius: 20, barThickness: 10, borderSkipped: false }] },
+          data: { labels: ageKeys, datasets: [
+            { label: '남자', data: displayM, backgroundColor: '#0ea5e9', borderRadius: 20, barThickness: 10, borderSkipped: false,
+              datalabels: { anchor: 'start', align: 'start', formatter: v => v !== 0 ? Math.abs(v).toFixed(p4dec) : '' } },
+            { label: '여자', data: displayF, backgroundColor: '#ec4899', borderRadius: 20, barThickness: 10, borderSkipped: false,
+              datalabels: { anchor: 'end', align: 'end', formatter: v => v !== 0 ? Math.abs(v).toFixed(p4dec) : '' } }
+          ] },
           options: {
             indexAxis: 'y', responsive: true, maintainAspectRatio: false,
             plugins: {
               legend: { position: 'top' },
-              datalabels: { display: false },
-              tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.abs(c.raw).toFixed(viewState.p4 === 'rate' ? 1 : 0)}${unit}${viewState.p4 === 'rate' ? ' (10만명당)' : ''}` } }
+              datalabels: { color: '#0f172a', font: { size: 11, weight: 600 } },
+              tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.abs(c.raw).toFixed(p4dec)}${unit}${viewState.p4 === 'rate' ? ' (10만명당)' : ''}` } }
             },
             scales: {
               x: {
                 grid: { color: GRID_COLOR },
                 min: -axisLimit, max: axisLimit,
-                ticks: { callback: v => Math.abs(v).toFixed(viewState.p4 === 'rate' ? 1 : 0) }
+                ticks: { callback: v => Math.abs(v).toFixed(p4dec) }
               },
               y: { grid: { display: false } }
             }
           }
         });
 
-        // 미니 도넛 (성별 구성비)
+        // 도넛 (성별 구성비)
         initChart('c4_mini_donut', {
           type: 'doughnut',
           data: { labels: ['남', '여'], datasets: [{ data: [mTotal, fTotal], backgroundColor: ['#0ea5e9', '#ec4899'], borderWidth: 0 }] },
           options: {
-            responsive: true, maintainAspectRatio: true, cutout: '55%',
+            responsive: true, maintainAspectRatio: false, cutout: '55%',
             plugins: {
-              legend: { display: false },
+              legend: { position: 'bottom' },
               datalabels: {
-                color: '#fff', font: { size: 10, weight: 'bold' },
-                formatter: (value) => { const pct = ((value / (mTotal + fTotal || 1)) * 100).toFixed(0); return pct + '%'; }
+                color: '#fff', font: { size: 12, weight: 'bold' },
+                formatter: (value) => { const pct = ((value / (mTotal + fTotal || 1)) * 100).toFixed(0); return value.toLocaleString() + '건\n' + pct + '%'; }
               },
               tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw.toLocaleString()}건 (${((ctx.raw / (mTotal + fTotal || 1)) * 100).toFixed(1)}%)` } }
             }
@@ -1692,16 +1698,19 @@
           }
           return subs.reduce((s, k) => s + KR_RATE[k], 0) / subs.length;
         });
+        const ageRateMax = Math.max(...rates, ...krRates10);
         initChart('c4_age_rate_compare', {
           type: 'bar',
           data: {
             labels: ageKeys,
             datasets: [
-              { label: '세종시', data: rates, backgroundColor: PALETTE[0], borderRadius: 4, barThickness: 24, order: 2 },
-              { label: '전국', data: krRates10, type: 'line', borderColor: '#ef4444', backgroundColor: '#ef444433', borderWidth: 2, borderDash: [6, 3], pointStyle: 'circle', pointRadius: 4, pointBackgroundColor: '#ef4444', fill: false, order: 1 }
+              { label: '세종시', data: rates, backgroundColor: PALETTE[0], borderRadius: 4, barThickness: 24, order: 2,
+                datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 600 }, formatter: v => v.toFixed(1) } },
+              { label: '전국', data: krRates10, type: 'line', borderColor: '#ef4444', backgroundColor: '#ef444433', borderWidth: 2, borderDash: [6, 3], pointStyle: 'circle', pointRadius: 4, pointBackgroundColor: '#ef4444', fill: false, order: 1,
+                datalabels: { display: false } }
             ]
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${typeof ctx.raw === 'number' ? ctx.raw.toFixed(1) : ctx.raw}명 (10만명당)` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: {}, legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${typeof ctx.raw === 'number' ? ctx.raw.toFixed(1) : ctx.raw}명 (10만명당)` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: Math.ceil(ageRateMax * 1.2) || 1 } } }
         });
 
         const lcMap = {
@@ -1728,10 +1737,12 @@
           });
           return { label: nm, data: counts, backgroundColor: window.getGlobalColor(nm) };
         });
+        const lcTotals = lcKeys.map((_, i) => c4LcDatasets.reduce((s, ds) => s + (ds.data[i] || 0), 0));
+        const lcMax = Math.ceil(Math.max(...lcTotals) * 1.2) || 1;
         initChart('c4_lifecycle', {
           type: 'bar',
           data: { labels: lcKeys, datasets: c4LcDatasets },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom' }, datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR } } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom' }, datalabels: { display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => v > 0 ? ctx.dataset.label + ' ' + v : '' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, max: lcMax } } }
         });
       }
 
