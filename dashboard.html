@@ -770,10 +770,7 @@
         <div class="page-title-row">
           <h2 class="page-title">읍면동별 발생현황</h2>
         </div>
-        <div class="grid grid-map">
-      </div>
-
-      <div class="grid-map-fixed">
+        <div class="grid grid-map-fixed">
         <div class="card map-card">
           <div class="card-header">
             <h3 id="c3_map_title">읍면동별 발생지도</h3>
@@ -804,7 +801,7 @@
         </div>
       </div>
 
-      <div class="grid-2">
+      <div class="grid grid-2">
         <div class="card">
           <h3 id="c3_top5_title">주요 읍면동 다빈도 감염병 (TOP 5)</h3>
           <div class="chart-wrap h400"><canvas id="c3_top5_disease"></canvas></div>
@@ -1523,7 +1520,7 @@
             let pct = val / max;
             let bg = pct > 0.7 ? '#fca5a5' : pct > 0.3 ? '#fef08a' : '#dcfce7';
             let textC = pct > 0.7 ? '#991b1b' : pct > 0.3 ? '#854d0e' : '#166534';
-            ht += `<td><div style="background:${bg};color:${textC};border-radius:4px;padding:4px 0;font-weight:600;">${val}</div></td>`;
+            ht += `<td><div style="background:${bg};color:${textC};border-radius:4px;padding:4px 0;font-weight:600;text-align:center;">${val}</div></td>`;
           });
           ht += `<td style="font-weight:700; color:#003e74;">${sum}</td></tr>`;
         });
