@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |------|------|
 | **프로젝트명** | 세종시 감염병관리지원단(SJCIDC) 대시보드 웹 전환 |
 | **목적** | Tableau Public 5페이지 대시보드 → 바닐라 HTML 웹으로 전환 (라이선스 비용 제거) |
-| **주요 파일** | `dashboard.html` (단일 파일 — CSS + JS + GeoJSON 데이터 전부 내장, ~1,600줄) |
+| **주요 파일** | `dashboard.html` (단일 파일 — CSS + JS + GeoJSON 데이터 전부 내장, ~1,880줄) |
 | **GitHub** | `https://github.com/glow3855/Sejong-City-Infectious-Disease-Dashboard.git` (branch: main) |
 | **배포 예정** | GitHub Pages → sjcidc.or.kr 에 iframe 임베딩 |
 | **데이터 구조** | `rawData` = 감염병 원시 데이터 하드코딩 (컬럼: `신고일_yy`, `신고일_mm`, `질병급`, `감염병명`, `통계_emdb`, `성별`, `연령대5`), `KR_COMP_BY_YEAR` = 연도별 전국 구성비 (2001–2026) |
@@ -61,6 +61,7 @@ const setActive = (groupSelector, activeBtn) => {
 | `syncFilterUI()` | 모든 탭 필터 UI를 filterState와 동기화 |
 | `window.renderC5(name)` | P5 감염병 상세 차트 (updateDashboard 외부에서 호출) |
 | `DISEASE_ABBREV` + `processName()` | 감염병명 축약 매핑 |
+| `charts` | Chart.js 인스턴스 풀 전역 객체 — `initChart` 호출 시 기존 인스턴스 `destroy()` 후 새 인스턴스 저장 |
 | `initChart(id, config)` | Chart.js 래퍼 — 기존 차트 destroy 후 재생성 (`charts` 전역 객체에 인스턴스 보관) |
 | `renderMapSVG(mapData)` | GeoJSON 기반 SVG 코로플레스 지도 생성 (읍면동별 발생현황) |
 | `getTopN(arr, n)` | 감염병명별 건수 집계 후 상위 N개 반환 |
@@ -72,7 +73,7 @@ const setActive = (groupSelector, activeBtn) => {
 | `AGE_POP` | 10세 단위 연령대별 인구 상수 |
 | `KR_COMP_BY_YEAR` | 연도별(2001-2026) 전국 감염병 구성비 데이터 (%) |
 | `KR_RATE` | 연령대별 전국 발생률 기준값 (10만명당) — P4 비교용 |
-| `sejongGeoJson` | 세종시 읍면동 GeoJSON 데이터 인라인 상수 (line ~779) |
+| `sejongGeoJson` | 세종시 읍면동 GeoJSON 데이터 인라인 상수 (JS 섹션 상단, line ~870) |
 | `PALETTE` / `EXTENDED_PALETTE` | 차트용 색상 배열 (6색 / 15색). 감염병별 고정 색상은 `DISEASE_COLORS` 캐싱 방식의 `getGlobalColor`가 담당 |
 | `GRID_COLOR` | 차트 격자선 색상 (`#f1f5f9`) |
 | `createSparkline(id, labels, data, color, unit)` | P1 KPI 카드 아래 스파크라인 생성 헬퍼 (`initChart` 래핑) |
