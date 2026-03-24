@@ -718,9 +718,6 @@
     <!-- ==================== P2. 연도별·월별 ==================== -->
     <div class="page-content" id="p2">
       <div class="filter-bar">
-        <div class="filter-chip"><label>연도</label><select class="tab-filter" data-key="year"></select></div>
-        <div class="filter-chip"><label>월별</label><select class="tab-filter" data-key="month"></select></div>
-        <div class="filter-divider"></div>
         <div class="filter-chip"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
         <div class="filter-chip"><label>감염병</label><select class="tab-filter" data-key="disease"></select></div>
       </div>
@@ -765,6 +762,9 @@
       <div class="filter-bar">
         <div class="filter-chip"><label>연도</label><select class="tab-filter" data-key="year"></select></div>
         <div class="filter-chip"><label>월별</label><select class="tab-filter" data-key="month"></select></div>
+        <div class="filter-divider"></div>
+        <div class="filter-chip"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
+        <div class="filter-chip"><label>감염병</label><select class="tab-filter" data-key="disease"></select></div>
       </div>
       <div style="padding:var(--content-padding);">
         <div class="page-title-row">
@@ -1543,9 +1543,10 @@
           if (top5title) top5title.textContent = p3SelRegion + ' 다빈도 감염병 (TOP 10)';
           const rgnData = filtered.filter(d => { const raw = d['통계_emdb'] || '기타'; return (EMDB_MAP[raw] || raw) === p3SelRegion; });
           const rgnTop = getTopN(rgnData, 10);
+          const rgnTopMax = Math.max(...rgnTop.map(x => x[1]));
           initChart('c3_top5_disease', {
             type: 'bar', data: { labels: rgnTop.map(x => x[0]), datasets: [{ label: p3SelRegion, data: rgnTop.map(x => x[1]), backgroundColor: rgnTop.map(x => window.getGlobalColor(x[0])), borderRadius: 4 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: Math.ceil(rgnTopMax * 1.2) || 1 } } }
           });
         } else {
           if (top5title) top5title.textContent = '주요 읍면동 다빈도 감염병 (TOP 5)';
@@ -1562,9 +1563,11 @@
           const datasets = diseaseList.map(dis => ({
             label: dis, data: top5rgns.map(r => rgnDiseaseMap[r][dis] || 0), backgroundColor: window.getGlobalColor(dis), borderRadius: 4
           }));
+          const stackTotals = top5rgns.map((_, i) => datasets.reduce((s, ds) => s + (ds.data[i] || 0), 0));
+          const stackMax = Math.ceil(Math.max(...stackTotals) * 1.2) || 1;
           initChart('c3_top5_disease', {
             type: 'bar', data: { labels: top5rgns, datasets },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, beginAtZero: true } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => v > 0 ? ctx.dataset.label + ' ' + v : '' }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, beginAtZero: true, max: stackMax } } }
           });
         }
 
@@ -1586,12 +1589,13 @@
           const curRgn = {}; curFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (REGION_POP[e]) curRgn[e] = (curRgn[e] || 0) + 1; });
           const prevRgn = {}; prevFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (REGION_POP[e]) prevRgn[e] = (prevRgn[e] || 0) + 1; });
           const yoyLabels = Object.keys(curRgn).sort((a, b) => (curRgn[b] || 0) - (curRgn[a] || 0)).slice(0, 10);
+          const yoyMax = Math.max(...yoyLabels.map(r => Math.max(curRgn[r] || 0, prevRgn[r] || 0)));
           initChart('c3_yoy_bar', {
             type: 'bar', data: { labels: yoyLabels, datasets: [
               { label: curY + '년', data: yoyLabels.map(r => curRgn[r] || 0), backgroundColor: PALETTE[0], borderRadius: 4 },
               { label: prevY + '년', data: yoyLabels.map(r => prevRgn[r] || 0), backgroundColor: '#cbd5e1', borderRadius: 4 }
             ] },
-            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, datalabels: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, datalabels: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, max: Math.ceil(yoyMax * 1.2) || 1 }, y: { grid: { display: false } } } }
           });
         }
       }
