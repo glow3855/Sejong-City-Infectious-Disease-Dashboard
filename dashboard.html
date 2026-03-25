@@ -890,12 +890,12 @@
 
       <div class="grid-2">
         <div class="card">
-          <h3>선택 감염병 연도별 추이</h3>
-          <div class="chart-wrap"><canvas id="c5_trend"></canvas></div>
+          <h3 id="c5_month_title">월별 신고현황</h3>
+          <div class="chart-wrap"><canvas id="c5_month"></canvas></div>
         </div>
         <div class="card">
-          <h3>연도별·월별 신고현황</h3>
-          <div class="chart-wrap"><canvas id="c5_month"></canvas></div>
+          <h3>선택 감염병 연도별 추이</h3>
+          <div class="chart-wrap"><canvas id="c5_trend"></canvas></div>
         </div>
       </div>
 
@@ -1823,8 +1823,9 @@
       const years = Object.keys(yearGrp).sort().slice(-7);
       const trendData = years.map(y => yearGrp[y] || 0);
       const trendMax = Math.ceil(Math.max(...trendData) * 1.25) || 1;
+      const diseaseClr = window.getGlobalColor(name);
       initChart('c5_trend', {
-        type: 'line', data: { labels: years, datasets: [{ label: name + ' 건수', data: trendData, borderColor: PALETTE[0], backgroundColor: PALETTE[0] + '33', fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 8 }] },
+        type: 'line', data: { labels: years, datasets: [{ label: name + ' 건수', data: trendData, borderColor: diseaseClr, backgroundColor: diseaseClr + '33', fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 8 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: trendMax } } }
       });
 
@@ -1833,12 +1834,18 @@
       const targetYears = filterState.year !== '전체' ? [filterState.year] : allYears.slice(-3);
       let c5Datasets = targetYears.map((yr, idx) => {
         let mData = mths.map((_, i) => dOnly.filter(d => d['신고일_yy'] === yr && parseInt(d['신고일_mm']) === (i + 1)).length);
-        return { label: yr + '년', data: mData, borderColor: PALETTE[idx % PALETTE.length], backgroundColor: PALETTE[idx % PALETTE.length], tension: 0.3, fill: false };
+        return { label: name, data: mData, borderColor: diseaseClr, backgroundColor: diseaseClr, tension: 0.3, fill: false };
       });
+      // 월별 차트 제목 업데이트
+      const monthTitle = document.getElementById('c5_month_title');
+      if (monthTitle) {
+        const yearLabel = filterState.year !== '전체' ? filterState.year : targetYears.join('·');
+        monthTitle.textContent = `${name} ${yearLabel}년 월별 신고현황`;
+      }
       const monthMax = Math.ceil(Math.max(...c5Datasets.flatMap(ds => ds.data)) * 1.25) || 1;
       initChart('c5_month', {
         type: 'line', data: { labels: mths, datasets: c5Datasets },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label} ${ctx.label}: ${ctx.raw}건` } } }, scales: { y: { beginAtZero: true, grid: { color: GRID_COLOR }, max: monthMax }, x: { grid: { display: false } } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `${name} ${ctx.label}: ${ctx.raw}건` } } }, scales: { y: { beginAtZero: true, grid: { color: GRID_COLOR }, max: monthMax }, x: { grid: { display: false } } } }
       });
 
       // c5_age_dist: 연령분포
@@ -1866,7 +1873,7 @@
       const regionSorted = Object.entries(regionCnts).sort((a, b) => b[1] - a[1]).slice(0, 10);
       const regionMax = Math.ceil(Math.max(...regionSorted.map(r => r[1])) * 1.25) || 1;
       initChart('c5_region_dist', {
-        type: 'bar', data: { labels: regionSorted.map(r => r[0]), datasets: [{ label: name, data: regionSorted.map(r => r[1]), backgroundColor: PALETTE[0], borderRadius: 4 }] },
+        type: 'bar', data: { labels: regionSorted.map(r => r[0]), datasets: [{ label: name, data: regionSorted.map(r => r[1]), backgroundColor: diseaseColor, borderRadius: 4 }] },
         options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, max: regionMax }, y: { grid: { display: false } } } }
       });
     };
