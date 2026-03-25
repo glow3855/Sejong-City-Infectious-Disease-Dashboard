@@ -594,6 +594,32 @@
       .grid-21 { grid-template-columns: 1fr; }
     }
 
+    /* ===== 설정 페이지 ===== */
+    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 8px 12px; }
+    .settings-wrap { max-width: 860px; padding: var(--content-padding); display: flex; flex-direction: column; gap: 24px; }
+    .settings-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+    .settings-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .badge-custom { font-size: 11px; font-weight: 600; background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: var(--radius-pill); }
+    .mode-toggle-row { display: flex; gap: 10px; }
+    .mode-btn { display: flex; align-items: center; gap: 8px; padding: 10px 24px; border: 2px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-secondary); font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; }
+    .mode-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .mode-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+    .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .palette-card { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px 12px; border: 2px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); cursor: pointer; transition: all .15s; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .palette-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-card); }
+    .palette-card.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+    .palette-swatches { display: flex; gap: 4px; }
+    .palette-swatch { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
+    .custom-palette-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+    .color-swatch-edit { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); font-weight: 500; cursor: pointer; }
+    .color-swatch-edit input[type=color] { width: 48px; height: 48px; border: 2px solid var(--border); border-radius: var(--radius-md); cursor: pointer; padding: 2px; background: none; }
+    .color-swatch-edit input[type=color]:hover { border-color: var(--primary); }
+    .btn-apply-custom { padding: 9px 20px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
+    .btn-apply-custom:hover { background: var(--primary-dark); }
+    .settings-preview-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .preview-chip { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--radius-md); font-size: 12px; font-weight: 600; border: 1px solid var(--border); }
+    .preview-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+
     /* ===== 새로고침 버튼 ===== */
     .btn-refresh {
       background: none; border: none; cursor: pointer;
@@ -641,6 +667,11 @@
       <a class="nav-item tab" data-target="p5">
         <span class="nav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
         감염병별
+      </a>
+      <div class="sidebar-divider"></div>
+      <a class="nav-item tab" data-target="p6">
+        <span class="nav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>
+        설정
       </a>
     </nav>
   </aside>
@@ -929,6 +960,109 @@
       </div>
     </div>
 
+    <!-- ==================== P6. 설정 ==================== -->
+    <div class="page-content" id="p6">
+      <div class="settings-wrap">
+
+        <!-- 모드 -->
+        <div class="settings-section">
+          <h2 class="settings-title">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            모드
+          </h2>
+          <div class="mode-toggle-row">
+            <button class="mode-btn active" data-mode="light">☀ 라이트</button>
+            <button class="mode-btn" data-mode="dark">☾ 다크</button>
+          </div>
+        </div>
+
+        <!-- 색상 팔레트 -->
+        <div class="settings-section">
+          <h2 class="settings-title">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+            색상 팔레트
+          </h2>
+          <div class="palette-grid">
+            <button class="palette-card active" data-palette="sejong">
+              <div class="palette-swatches">
+                <div class="palette-swatch" style="background:#0072CE"></div>
+                <div class="palette-swatch" style="background:#00AEEF"></div>
+                <div class="palette-swatch" style="background:#C8A951"></div>
+                <div class="palette-swatch" style="background:#EF4444"></div>
+                <div class="palette-swatch" style="background:#58595B"></div>
+              </div>
+              세종 블루
+            </button>
+            <button class="palette-card" data-palette="green">
+              <div class="palette-swatches">
+                <div class="palette-swatch" style="background:#059669"></div>
+                <div class="palette-swatch" style="background:#10B981"></div>
+                <div class="palette-swatch" style="background:#34D399"></div>
+                <div class="palette-swatch" style="background:#F59E0B"></div>
+                <div class="palette-swatch" style="background:#6B7280"></div>
+              </div>
+              에메랄드
+            </button>
+            <button class="palette-card" data-palette="violet">
+              <div class="palette-swatches">
+                <div class="palette-swatch" style="background:#7C3AED"></div>
+                <div class="palette-swatch" style="background:#A78BFA"></div>
+                <div class="palette-swatch" style="background:#C4B5FD"></div>
+                <div class="palette-swatch" style="background:#F59E0B"></div>
+                <div class="palette-swatch" style="background:#6B7280"></div>
+              </div>
+              바이올렛
+            </button>
+            <button class="palette-card" data-palette="amber">
+              <div class="palette-swatches">
+                <div class="palette-swatch" style="background:#D97706"></div>
+                <div class="palette-swatch" style="background:#F59E0B"></div>
+                <div class="palette-swatch" style="background:#FCD34D"></div>
+                <div class="palette-swatch" style="background:#EF4444"></div>
+                <div class="palette-swatch" style="background:#6B7280"></div>
+              </div>
+              앰버
+            </button>
+            <button class="palette-card" data-palette="rose">
+              <div class="palette-swatches">
+                <div class="palette-swatch" style="background:#E11D48"></div>
+                <div class="palette-swatch" style="background:#FB7185"></div>
+                <div class="palette-swatch" style="background:#FDA4AF"></div>
+                <div class="palette-swatch" style="background:#7C3AED"></div>
+                <div class="palette-swatch" style="background:#6B7280"></div>
+              </div>
+              로즈
+            </button>
+          </div>
+        </div>
+
+        <!-- 커스텀 팔레트 -->
+        <div class="settings-section">
+          <h2 class="settings-title">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            커스텀 팔레트
+            <span class="badge-custom">직접 편집</span>
+          </h2>
+          <div class="custom-palette-row">
+            <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="0" value="#0072CE"><span>주색상</span></label>
+            <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="1" value="#00AEEF"><span>보조색</span></label>
+            <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="2" value="#C8A951"><span>색상 3</span></label>
+            <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="3" value="#EF4444"><span>강조색</span></label>
+            <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="4" value="#58595B"><span>중립색</span></label>
+            <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="5" value="#E5E7EB"><span>배경색</span></label>
+          </div>
+          <button class="btn-apply-custom" id="btn_apply_custom">이 색상으로 적용</button>
+        </div>
+
+        <!-- 현재 테마 미리보기 -->
+        <div class="settings-section">
+          <h2 class="settings-title">현재 테마 색상</h2>
+          <div class="settings-preview-row" id="settings_preview_row"></div>
+        </div>
+
+      </div>
+    </div>
+
   </div><!-- /main -->
 </div><!-- /app-layout -->
 
@@ -944,7 +1078,9 @@
     // PALETTE[0] = --primary, PALETTE[1] = --accent
     const PALETTE = ['#0072CE', '#00AEEF', '#C8A951', '#EF4444', '#58595B', '#E5E7EB'];
     // GRID_COLOR = --border-light
-    const GRID_COLOR = '#F3F4F6';
+    let GRID_COLOR = '#F3F4F6';
+    let CHART_LABEL_COLOR = '#0f172a';
+    let MAP_BORDER_COLOR  = MAP_BORDER_COLOR;
 
     const EXTENDED_PALETTE = ['#0072CE', '#00AEEF', '#C8A951', '#EF4444', '#58595B', '#10B981', '#EC4899', '#14B8A6', '#F59E0B', '#84CC16', '#6366F1', '#F97316', '#06B6D4', '#8B5CF6', '#0072CE'];
     const DISEASE_COLORS = {};
@@ -957,6 +1093,163 @@
       }
       return DISEASE_COLORS[name];
     };
+    // ───── 테마 시스템 ─────
+    const THEMES = {
+      'sejong-light': {
+        '--primary':'#0072CE','--primary-dark':'#004A8D','--primary-light':'#D6EAFB','--accent':'#00AEEF',
+        '--bg-page':'#F5F5F5','--bg-card':'#FFFFFF','--bg-sidebar':MAP_BORDER_COLOR,'--bg-hover':'#F9FAFB','--bg-selected':'#EFF6FF',
+        '--text-primary':'#111827','--text-secondary':'#6B7280','--text-muted':'#9CA3AF','--text-inverse':'#FFFFFF',
+        '--border':'#E5E7EB','--border-light':'#F3F4F6','--color-up':'#EF4444','--color-down':'#0072CE',
+        palette:['#0072CE','#00AEEF','#C8A951','#EF4444','#58595B','#E5E7EB'],
+        gridColor:'#F3F4F6',labelColor:'#0f172a',mapBorder:MAP_BORDER_COLOR,chartText:'#6B7280'
+      },
+      'sejong-dark': {
+        '--primary':'#3B9EFF','--primary-dark':'#1E5FA8','--primary-light':'#1E3A5F','--accent':'#38C3FF',
+        '--bg-page':'#0F1624','--bg-card':'#1A2438','--bg-sidebar':'#080E1A','--bg-hover':'#243045','--bg-selected':'#1B3260',
+        '--text-primary':'#E8EFFE','--text-secondary':'#8DA4C4','--text-muted':'#546A87','--text-inverse':'#0F1624',
+        '--border':'#243045','--border-light':'#1A2438','--color-up':'#F87171','--color-down':'#3B9EFF',
+        palette:['#3B9EFF','#38C3FF','#FBBF24','#F87171','#94A3B8','#243045'],
+        gridColor:'#243045',labelColor:'#E8EFFE',mapBorder:'#3B9EFF',chartText:'#8DA4C4'
+      },
+      'green-light': {
+        '--primary':'#059669','--primary-dark':'#064E3B','--primary-light':'#D1FAE5','--accent':'#10B981',
+        '--bg-page':'#F0FDF4','--bg-card':'#FFFFFF','--bg-sidebar':'#064E3B','--bg-hover':'#F0FDF4','--bg-selected':'#D1FAE5',
+        '--text-primary':'#111827','--text-secondary':'#6B7280','--text-muted':'#9CA3AF','--text-inverse':'#FFFFFF',
+        '--border':'#D1FAE5','--border-light':'#ECFDF5','--color-up':'#EF4444','--color-down':'#059669',
+        palette:['#059669','#10B981','#34D399','#F59E0B','#6B7280','#D1FAE5'],
+        gridColor:'#ECFDF5',labelColor:'#0f172a',mapBorder:'#064E3B',chartText:'#6B7280'
+      },
+      'green-dark': {
+        '--primary':'#34D399','--primary-dark':'#065F46','--primary-light':'#064E3B','--accent':'#6EE7B7',
+        '--bg-page':'#052E16','--bg-card':'#0D2818','--bg-sidebar':'#020E08','--bg-hover':'#14401F','--bg-selected':'#0A3D17',
+        '--text-primary':'#ECFDF5','--text-secondary':'#6EE7B7','--text-muted':'#34D399','--text-inverse':'#052E16',
+        '--border':'#14401F','--border-light':'#0D2818','--color-up':'#F87171','--color-down':'#34D399',
+        palette:['#34D399','#6EE7B7','#FBBF24','#F87171','#94A3B8','#14401F'],
+        gridColor:'#14401F',labelColor:'#ECFDF5',mapBorder:'#34D399',chartText:'#6EE7B7'
+      },
+      'violet-light': {
+        '--primary':'#7C3AED','--primary-dark':'#4C1D95','--primary-light':'#EDE9FE','--accent':'#A78BFA',
+        '--bg-page':'#F5F3FF','--bg-card':'#FFFFFF','--bg-sidebar':'#4C1D95','--bg-hover':'#F5F3FF','--bg-selected':'#EDE9FE',
+        '--text-primary':'#111827','--text-secondary':'#6B7280','--text-muted':'#9CA3AF','--text-inverse':'#FFFFFF',
+        '--border':'#DDD6FE','--border-light':'#EDE9FE','--color-up':'#EF4444','--color-down':'#7C3AED',
+        palette:['#7C3AED','#A78BFA','#C4B5FD','#F59E0B','#6B7280','#EDE9FE'],
+        gridColor:'#EDE9FE',labelColor:'#0f172a',mapBorder:'#4C1D95',chartText:'#6B7280'
+      },
+      'violet-dark': {
+        '--primary':'#A78BFA','--primary-dark':'#5B21B6','--primary-light':'#2E1065','--accent':'#C4B5FD',
+        '--bg-page':'#13002E','--bg-card':'#1E0A42','--bg-sidebar':'#0A0015','--bg-hover':'#2D1060','--bg-selected':'#3B1577',
+        '--text-primary':'#F5F3FF','--text-secondary':'#C4B5FD','--text-muted':'#7C3AED','--text-inverse':'#13002E',
+        '--border':'#2D1060','--border-light':'#1E0A42','--color-up':'#F87171','--color-down':'#A78BFA',
+        palette:['#A78BFA','#C4B5FD','#FBBF24','#F87171','#94A3B8','#2D1060'],
+        gridColor:'#2D1060',labelColor:'#F5F3FF',mapBorder:'#A78BFA',chartText:'#C4B5FD'
+      },
+      'amber-light': {
+        '--primary':'#D97706','--primary-dark':'#78350F','--primary-light':'#FEF3C7','--accent':'#F59E0B',
+        '--bg-page':'#FFFBEB','--bg-card':'#FFFFFF','--bg-sidebar':'#78350F','--bg-hover':'#FFFBEB','--bg-selected':'#FEF3C7',
+        '--text-primary':'#111827','--text-secondary':'#6B7280','--text-muted':'#9CA3AF','--text-inverse':'#FFFFFF',
+        '--border':'#FDE68A','--border-light':'#FEF3C7','--color-up':'#EF4444','--color-down':'#D97706',
+        palette:['#D97706','#F59E0B','#FCD34D','#EF4444','#6B7280','#FEF3C7'],
+        gridColor:'#FEF3C7',labelColor:'#0f172a',mapBorder:'#78350F',chartText:'#6B7280'
+      },
+      'amber-dark': {
+        '--primary':'#FCD34D','--primary-dark':'#92400E','--primary-light':'#451A03','--accent':'#FDE68A',
+        '--bg-page':'#1C0F00','--bg-card':'#2C1A00','--bg-sidebar':'#0F0800','--bg-hover':'#3D2400','--bg-selected':'#4A2C00',
+        '--text-primary':'#FFFBEB','--text-secondary':'#FDE68A','--text-muted':'#F59E0B','--text-inverse':'#1C0F00',
+        '--border':'#3D2400','--border-light':'#2C1A00','--color-up':'#F87171','--color-down':'#FCD34D',
+        palette:['#FCD34D','#FDE68A','#34D399','#F87171','#94A3B8','#3D2400'],
+        gridColor:'#3D2400',labelColor:'#FFFBEB',mapBorder:'#FCD34D',chartText:'#FDE68A'
+      },
+      'rose-light': {
+        '--primary':'#E11D48','--primary-dark':'#881337','--primary-light':'#FFE4E6','--accent':'#FB7185',
+        '--bg-page':'#FFF1F2','--bg-card':'#FFFFFF','--bg-sidebar':'#881337','--bg-hover':'#FFF1F2','--bg-selected':'#FFE4E6',
+        '--text-primary':'#111827','--text-secondary':'#6B7280','--text-muted':'#9CA3AF','--text-inverse':'#FFFFFF',
+        '--border':'#FECDD3','--border-light':'#FFE4E6','--color-up':'#EF4444','--color-down':'#E11D48',
+        palette:['#E11D48','#FB7185','#FDA4AF','#7C3AED','#6B7280','#FFE4E6'],
+        gridColor:'#FFE4E6',labelColor:'#0f172a',mapBorder:'#881337',chartText:'#6B7280'
+      },
+      'rose-dark': {
+        '--primary':'#FB7185','--primary-dark':'#9F1239','--primary-light':'#4C0519','--accent':'#FDA4AF',
+        '--bg-page':'#1F0010','--bg-card':'#30001A','--bg-sidebar':'#12000A','--bg-hover':'#450025','--bg-selected':'#5A0030',
+        '--text-primary':'#FFF1F2','--text-secondary':'#FDA4AF','--text-muted':'#FB7185','--text-inverse':'#1F0010',
+        '--border':'#450025','--border-light':'#30001A','--color-up':'#FDE68A','--color-down':'#FB7185',
+        palette:['#FB7185','#FDA4AF','#FBBF24','#A78BFA','#94A3B8','#450025'],
+        gridColor:'#450025',labelColor:'#FFF1F2',mapBorder:'#FB7185',chartText:'#FDA4AF'
+      }
+    };
+
+    let currentThemeId = 'sejong-light';
+    let currentMode = 'light';
+    let customPalette = [...THEMES['sejong-light'].palette];
+    let _usingCustom = false;
+
+    function buildExtended(p) {
+      const extra = ['#10B981','#EC4899','#14B8A6','#F59E0B','#84CC16','#6366F1','#F97316','#06B6D4','#8B5CF6'];
+      return [...p, ...extra];
+    }
+
+    function applyTheme(themeId, useCustom) {
+      if (useCustom === undefined) useCustom = _usingCustom;
+      const t = THEMES[themeId] || THEMES['sejong-light'];
+      const pal = useCustom ? customPalette : t.palette;
+      Object.entries(t).forEach(([k, v]) => {
+        if (k.startsWith('--')) document.documentElement.style.setProperty(k, v);
+      });
+      PALETTE.splice(0, PALETTE.length, ...pal);
+      EXTENDED_PALETTE.splice(0, EXTENDED_PALETTE.length, ...buildExtended(pal));
+      GRID_COLOR        = t.gridColor;
+      CHART_LABEL_COLOR = t.labelColor;
+      MAP_BORDER_COLOR  = t.mapBorder;
+      Chart.defaults.color = t.chartText;
+      Object.keys(DISEASE_COLORS).forEach(k => delete DISEASE_COLORS[k]);
+      extColorIdx = 0;
+      currentThemeId = themeId;
+      currentMode = themeId.endsWith('-dark') ? 'dark' : 'light';
+      _usingCustom = useCustom;
+      try {
+        localStorage.setItem('sjcidc_theme', JSON.stringify({ themeId, useCustom, customPalette }));
+      } catch(e) {}
+      if (rawData.length > 0) updateDashboard();
+      renderSettingsUI();
+    }
+
+    function loadSavedTheme() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('sjcidc_theme') || '{}');
+        if (saved.themeId && THEMES[saved.themeId]) {
+          if (Array.isArray(saved.customPalette) && saved.customPalette.length === 6) {
+            customPalette = saved.customPalette;
+          }
+          const t = THEMES[saved.themeId];
+          const pal = saved.useCustom ? customPalette : t.palette;
+          Object.entries(t).forEach(([k, v]) => {
+            if (k.startsWith('--')) document.documentElement.style.setProperty(k, v);
+          });
+          PALETTE.splice(0, PALETTE.length, ...pal);
+          EXTENDED_PALETTE.splice(0, EXTENDED_PALETTE.length, ...buildExtended(pal));
+          GRID_COLOR        = t.gridColor;
+          CHART_LABEL_COLOR = t.labelColor;
+          MAP_BORDER_COLOR  = t.mapBorder;
+          Chart.defaults.color = t.chartText;
+          currentThemeId = saved.themeId;
+          currentMode = saved.themeId.endsWith('-dark') ? 'dark' : 'light';
+          _usingCustom = !!saved.useCustom;
+        }
+      } catch(e) {}
+    }
+
+    function renderSettingsUI() {
+      const paletteBase = currentThemeId.replace('-light','').replace('-dark','');
+      document.querySelectorAll('.mode-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === currentMode);
+      });
+      document.querySelectorAll('.palette-card').forEach(c => {
+        c.classList.toggle('active', c.dataset.palette === paletteBase);
+      });
+      document.querySelectorAll('.custom-color-input').forEach(inp => {
+        const idx = parseInt(inp.dataset.idx);
+        inp.value = customPalette[idx] || PALETTE[idx] || '#000000';
+      });
+    }
 
     const POP_BASE = 391122; // 2025년 세종시 전체 인구 (sj_pop 시트 기준)
     const REGION_POP = {
@@ -1325,10 +1618,10 @@
       idHtml('sub_k4_1', `전월대비 ${formatDiff(k4_diff_m, '%')}`);
       idHtml('sub_k4_2', `전년동월대비 ${formatDiff(k4_diff_y, '%')}`);
 
-      createSparkline('k1_spark', k3_labels, k3_spark, '#0072CE', '건');
-      createSparkline('k2_spark', k3_labels, k4_spark, '#0072CE', '명');
-      createSparkline('k3_spark', k3_labels, k4_spark, '#0072CE', '명');
-      createSparkline('k4_spark', k3_labels, k_acc_spark, '#0072CE', '명');
+      createSparkline('k1_spark', k3_labels, k3_spark, PALETTE[0], '건');
+      createSparkline('k2_spark', k3_labels, k4_spark, PALETTE[0], '명');
+      createSparkline('k3_spark', k3_labels, k4_spark, PALETTE[0], '명');
+      createSparkline('k4_spark', k3_labels, k_acc_spark, PALETTE[0], '명');
 
       const activeTab = document.querySelector('.tab.active').dataset.target;
 
@@ -1339,13 +1632,14 @@
         return true;
       });
 
+      if (activeTab === 'p6') { renderSettingsUI(); return; }
       if (activeTab === 'p1') {
         const top5 = getTopN(timeFiltered, 5);
         const top5Max = Math.max(...top5.map(x => x[1]));
         initChart('c1_top5', {
           type: 'bar',
           data: { labels: top5.map(x => x[0]), datasets: [{ data: top5.map(x => x[1]), backgroundColor: top5.map(x => window.getGlobalColor(x[0])), borderRadius: 4, barThickness: 40 }] },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: '#0f172a', font: { weight: 'bold' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(top5Max * 1.2) } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: CHART_LABEL_COLOR, font: { weight: 'bold' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(top5Max * 1.2) } } }
         });
 
         // For c1_comp, we apply the year filter so the chart matches the dynamically updated year title
@@ -1538,7 +1832,7 @@
             indexAxis: 'y', responsive: true, maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
-              datalabels: { align: 'end', anchor: 'end', color: '#0f172a' },
+              datalabels: { align: 'end', anchor: 'end', color: CHART_LABEL_COLOR },
               tooltip: {
                 callbacks: { label: (c) => viewState.p3 === 'rate' ? `발생률: ${c.raw}명 (10만명당)` : `신고건수: ${c.raw}건` }
               }
@@ -1602,7 +1896,7 @@
           const rgnTopMax = Math.max(...rgnTop.map(x => x[1]));
           initChart('c3_top5_disease', {
             type: 'bar', data: { labels: rgnTop.map(x => x[0]), datasets: [{ label: p3SelRegion, data: rgnTop.map(x => x[1]), backgroundColor: rgnTop.map(x => window.getGlobalColor(x[0])), borderRadius: 4 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(rgnTopMax * 1.2) || 1 } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: CHART_LABEL_COLOR, font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(rgnTopMax * 1.2) || 1 } } }
           });
         } else {
           if (top5title) top5title.textContent = '주요 읍면동 다빈도 감염병 (TOP 5)';
@@ -1708,7 +2002,7 @@
             indexAxis: 'y', responsive: true, maintainAspectRatio: false,
             plugins: {
               legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
-              datalabels: { color: '#0f172a', font: { size: 11, weight: 600 } },
+              datalabels: { color: CHART_LABEL_COLOR, font: { size: 11, weight: 600 } },
               tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.abs(c.raw).toFixed(p4dec)}${unit}${viewState.p4 === 'rate' ? ' (10만명당)' : ''}` } }
             },
             scales: {
@@ -1777,7 +2071,7 @@
             labels: ageKeys,
             datasets: [
               { label: '세종시', data: rates, backgroundColor: PALETTE[0], borderRadius: 4, barThickness: 24, order: 2,
-                datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 600 }, formatter: v => v.toFixed(1) } },
+                datalabels: { display: true, anchor: 'end', align: 'end', color: CHART_LABEL_COLOR, font: { size: 11, weight: 600 }, formatter: v => v.toFixed(1) } },
               { label: '전국', data: krRates10, type: 'line', borderColor: '#ef4444', backgroundColor: '#ef444433', borderWidth: 2, borderDash: [6, 3], pointStyle: 'circle', pointRadius: 4, pointBackgroundColor: '#ef4444', fill: false, order: 1,
                 datalabels: { display: false } }
             ]
@@ -1917,7 +2211,7 @@
       const ageMax = Math.ceil(Math.max(...ageCnts) * 1.25) || 1;
       initChart('c5_age_dist', {
         type: 'bar', data: { labels: ageKeys10, datasets: [{ label: name, data: ageCnts, backgroundColor: diseaseColor, borderRadius: 4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: ageMax } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: CHART_LABEL_COLOR, font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: ageMax } } }
       });
 
       // c5_region_dist: 지역분포 TOP 10
@@ -1931,7 +2225,7 @@
       const regionMax = Math.ceil(Math.max(...regionSorted.map(r => r[1])) * 1.25) || 1;
       initChart('c5_region_dist', {
         type: 'bar', data: { labels: regionSorted.map(r => r[0]), datasets: [{ label: name, data: regionSorted.map(r => r[1]), backgroundColor: diseaseColor, borderRadius: 4 }] },
-        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, suggestedMax: regionMax }, y: { grid: { display: false } } } }
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: CHART_LABEL_COLOR, font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, suggestedMax: regionMax }, y: { grid: { display: false } } } }
       });
     };
 
@@ -2037,6 +2331,7 @@
           updateDashboard();
         }
       });
+      loadSavedTheme();
       loadData();
     });
 
@@ -2054,7 +2349,7 @@
           window._p3SelectedRegion = name;
           document.querySelectorAll('.map-rgn').forEach(p => { p.style.strokeWidth = ''; p.style.stroke = ''; });
           mapRgn.style.strokeWidth = '2.5px';
-          mapRgn.style.stroke = '#003e74';
+          mapRgn.style.stroke = MAP_BORDER_COLOR;
         }
         updateDashboard();
         return;
@@ -2101,7 +2396,50 @@
         setActive('#p4_butterfly_toggle .btn-toggle', btn);
         updateDashboard();
       }
+
+      // ── 설정 페이지 ──
+      // 모드 버튼 (라이트/다크)
+      if (btn.classList.contains('mode-btn') && btn.dataset.mode) {
+        const paletteBase = currentThemeId.replace('-light','').replace('-dark','');
+        applyTheme(paletteBase + '-' + btn.dataset.mode);
+      }
+
+      // 팔레트 카드
+      if (btn.classList.contains('palette-card') && btn.dataset.palette) {
+        applyTheme(btn.dataset.palette + '-' + currentMode);
+      }
+
+      // 커스텀 팔레트 적용
+      if (btn.id === 'btn_apply_custom') {
+        customPalette = [...document.querySelectorAll('.custom-color-input')].map(inp => inp.value);
+        _usingCustom = true;
+        applyTheme(currentThemeId, true);
+      }
     });
+
+    // 설정 미리보기 렌더 확장 (색상 토큰 칩 표시)
+    const _origRenderSettings = renderSettingsUI;
+    renderSettingsUI = function() {
+      _origRenderSettings();
+      const row = document.getElementById('settings_preview_row');
+      if (!row) return;
+      const items = [
+        { label:'Primary', varName:'--primary' },
+        { label:'Accent',  varName:'--accent' },
+        { label:'카드 배경',  varName:'--bg-card' },
+        { label:'페이지 배경', varName:'--bg-page' },
+        { label:'사이드바',   varName:'--bg-sidebar' },
+        { label:'텍스트',    varName:'--text-primary' },
+      ];
+      row.innerHTML = items.map(item => {
+        const color = getComputedStyle(document.documentElement).getPropertyValue(item.varName).trim();
+        return `<div class="preview-chip" style="background:var(--bg-card);color:var(--text-primary)">
+          <div class="preview-dot" style="background:${color};border:1px solid var(--border)"></div>
+          <span>${item.label}</span>
+          <span style="font-family:monospace;font-size:11px;color:var(--text-secondary)">${color}</span>
+        </div>`;
+      }).join('');
+    };
 
   </script>
 </body>
