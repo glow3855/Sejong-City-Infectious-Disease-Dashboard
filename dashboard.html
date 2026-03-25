@@ -736,7 +736,7 @@
           <div class="chart-wrap"><canvas id="c2_yearly"></canvas></div>
         </div>
         <div class="card">
-          <h3>주요 감염병 연간 현황 (TOP 5)</h3>
+          <div class="card-header"><h3>주요 감염병 연간 현황 (TOP 5)</h3></div>
           <div class="chart-wrap"><canvas id="c2_top5_line"></canvas></div>
         </div>
       </div>
@@ -1394,7 +1394,7 @@
               return { label: nm, data: counts, borderColor: window.getGlobalColor(nm), borderWidth: 2, pointRadius: 4, tension: 0.3 };
             })
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
         });
 
         const last5Years = years.slice(-5);
