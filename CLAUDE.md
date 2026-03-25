@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |------|------|
 | **프로젝트명** | 세종시 감염병관리지원단(SJCIDC) 대시보드 웹 전환 |
 | **목적** | Tableau Public 5페이지 대시보드 → 바닐라 HTML 웹으로 전환 (라이선스 비용 제거) |
-| **주요 파일** | `dashboard.html` (단일 파일 — CSS + JS + GeoJSON 데이터 전부 내장, ~1,880줄) |
+| **주요 파일** | `dashboard.html` (단일 파일 — CSS + JS + GeoJSON 데이터 전부 내장, ~1,933줄) |
 | **GitHub** | `https://github.com/glow3855/Sejong-City-Infectious-Disease-Dashboard.git` (branch: main) |
 | **배포 예정** | GitHub Pages → sjcidc.or.kr 에 iframe 임베딩 |
 | **데이터 구조** | `rawData` = 감염병 원시 데이터 하드코딩 (컬럼: `신고일_yy`, `신고일_mm`, `질병급`, `감염병명`, `통계_emdb`, `성별`, `연령대5`), `KR_COMP_BY_YEAR` = 연도별 전국 구성비 (2001–2026) |
@@ -18,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **실행 방법:** 빌드 없음 — `dashboard.html`을 브라우저에서 바로 열면 됨.
 
-**Git 규칙:** 코드 편집 완료 시 반드시 `git add` → `git commit` → `git push origin main` 까지 수행한다. 사용자가 별도로 요청하지 않아도 push까지 자동 진행한다.
+**Git 규칙:** `dashboard.html` 편집 완료 시 반드시 `git add` → `git commit` → `git push origin main` 까지 수행한다. 사용자가 별도로 요청하지 않아도 push까지 자동 진행한다. `CLAUDE.md` 등 다른 파일만 변경된 경우에는 push하지 않는다.
 
 ---
 
@@ -28,7 +28,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |------|------|------|
 | **차트** | Chart.js 4.4.7 + chartjs-plugin-datalabels 2.2.0 | CDN 로드 |
 | **지도** | 순수 SVG choropleth (`renderMapSVG` 함수) | 세종시 읍면동 GeoJSON 내장 |
+| **폰트** | Inter (Google Fonts) | `wght@400;500;600;700;800` |
 | **상태관리** | 바닐라 JS 전역 객체 | React/Zustand 미채택 |
+| **디자인 시스템** | CSS 변수 기반 디자인 토큰 (Figma Make 'Analytics Dashboard with Cross-Filtering' 템플릿 기반) | `:root` 블록에 정의 |
 | **빌드** | 없음 | 단일 HTML 파일 직접 편집 |
 
 ---
@@ -57,7 +59,7 @@ const setActive = (groupSelector, activeBtn) => {
 
 | 함수/변수 | 역할 |
 |----------|------|
-| `updateDashboard()` | 필터 변경 시 현재 활성 탭만 리렌더 (`activeTab = document.querySelector('.tab.active').dataset.target`로 판별, 비활성 탭은 스킵) |
+| `updateDashboard()` | 필터 변경 시 현재 활성 탭만 리렌더 (`activeTab = document.querySelector('.tab.active').dataset.target`로 판별, 비활성 탭은 스킵). 탭 = 사이드바 `.nav-item.tab` |
 | `syncFilterUI()` | 모든 탭 필터 UI를 filterState와 동기화 |
 | `window.renderC5(name)` | P5 감염병 상세 차트 (updateDashboard 외부에서 호출) |
 | `DISEASE_ABBREV` + `processName()` | 감염병명 축약 매핑 |
@@ -72,15 +74,16 @@ const setActive = (groupSelector, activeBtn) => {
 | `EMDB_MAP` | 법정동→행정동 매핑 (`집현동→반곡동`, `산울동→해밀동`, `가람동→한솔동`) — rawData의 통계_emdb가 법정동명으로 기록된 경우 처리 |
 | `AGE_POP` | 10세 단위 연령대별 인구 상수 |
 | `KR_COMP_BY_YEAR` | 연도별(2001-2026) 전국 감염병 구성비 데이터 (%) |
+| `KR_COMP_CNT_BY_YEAR` | 연도별(2001-2026) 전국 감염병 TOP5 신고건수 (`kr_rep.xlsx` 기반) — P1 구성비 차트 전국 툴팁용 |
 | `KR_RATE` | 연령대별 전국 발생률 기준값 (10만명당) — P4 비교용 |
-| `sejongGeoJson` | 세종시 읍면동 GeoJSON 데이터 인라인 상수 (JS 섹션 상단, line ~870) |
-| `PALETTE` / `EXTENDED_PALETTE` | 차트용 색상 배열 (6색 / 15색). 감염병별 고정 색상은 `DISEASE_COLORS` 캐싱 방식의 `getGlobalColor`가 담당 |
-| `GRID_COLOR` | 차트 격자선 색상 (`#f1f5f9`) |
+| `sejongGeoJson` | 세종시 읍면동 GeoJSON 데이터 인라인 상수 (JS 섹션 상단, line ~924) |
+| `PALETTE` / `EXTENDED_PALETTE` | 차트용 색상 배열 (6색 / 15색). `PALETTE[0]` = `--primary` (#3B82F6), `PALETTE[1]` = `--accent` (#10B981). 감염병별 고정 색상은 `DISEASE_COLORS` 캐싱 방식의 `getGlobalColor`가 담당 |
+| `GRID_COLOR` | 차트 격자선 색상 (`#F3F4F6`, = `--border-light`) |
 | `createSparkline(id, labels, data, color, unit)` | P1 KPI 카드 아래 스파크라인 생성 헬퍼 (`initChart` 래핑) |
 | `formatSparkLabel(label)` | 스파크라인 X축 레이블 포맷 (연도.월 → 연도 또는 월 표시) |
 | `getP3Pop(r)` | P3 블록 내부 로컬 함수 — 지역명 `r`에 대해 `REGION_POP_BY_YEAR[p3Year]` 조회, 없으면 최근 연도로 폴백 |
 
-**탭 전환 패턴:** `.tab[data-target]` 클릭 → 모든 `.tab`·`.page`에서 `active` 제거 → 클릭된 `.tab`과 `document.getElementById(tab.dataset.target)` (.page)에 `active` 추가. `updateDashboard()`는 탭 전환 시에도 재호출됨.
+**탭 전환 패턴:** 사이드바 `.nav-item.tab[data-target]` 클릭 → 모든 `.tab`·`.page-content`에서 `active` 제거 → 클릭된 `.tab`과 `document.getElementById(tab.dataset.target)` (`.page-content`)에 `active` 추가. `updateDashboard()`는 탭 전환 시에도 재호출됨.
 
 **이벤트 처리 패턴:** 필터 변경과 버튼 클릭 모두 `document` 레벨 이벤트 위임 사용.
 - 필터: `document.addEventListener('change', ...)` → `.tab-filter[data-key]` 감지 (`data-key`값이 `filterState` 키와 1:1 매핑)
@@ -107,20 +110,48 @@ const setActive = (groupSelector, activeBtn) => {
 
 ---
 
-## 5. CSS 클래스 규칙
+## 5. 레이아웃 & CSS 클래스 규칙
+
+**레이아웃:** 사이드바(`240px`, dark `#111827`) + 메인 영역 구조. 상단 헤더(`64px`, sticky white). Figma Make 'Analytics Dashboard with Cross-Filtering' 템플릿 기반.
 
 인라인 `style=""` 최소화 원칙 (JS 템플릿 리터럴 내 동적 색상 등 불가피한 경우만 허용).
 
-주요 커스텀 클래스:
-- `.card-header` — 제목+버튼 가로 배치
+**디자인 토큰 (`:root` CSS 변수):**
+- 브랜드: `--primary: #3B82F6`, `--primary-dark: #1E40AF`, `--primary-light: #DBEAFE`, `--accent: #10B981`
+- 배경: `--bg-page: #F5F5F5`, `--bg-card: #FFFFFF`, `--bg-sidebar: #111827`, `--bg-hover: #F9FAFB`, `--bg-selected: #EFF6FF`
+- 텍스트: `--text-primary: #111827`, `--text-secondary: #6B7280`, `--text-muted: #9CA3AF`
+- 테두리: `--border: #E5E7EB`, `--border-light: #F3F4F6`
+- 레이아웃: `--sidebar-w: 240px`, `--header-h: 64px`, `--gap: 20px`, `--content-padding: 24px`
+- 라운딩: `--radius-sm: 6px`, `--radius-md: 8px`, `--radius-lg: 12px`, `--radius-pill: 9999px`
+- 그림자: `--shadow-sm`, `--shadow-card`, `--shadow-lg`
+- 폰트: `--font: 'Inter', 'Pretendard', -apple-system, 'Malgun Gothic', sans-serif`
+
+**주요 레이아웃 클래스:**
+- `.app-layout` — 최상위 flex 컨테이너 (사이드바 + 메인)
+- `.sidebar` / `.sidebar-brand` / `.sidebar-nav` / `.nav-item` — 좌측 사이드바 네비게이션
+- `.main` — 메인 콘텐츠 영역 (`margin-left: var(--sidebar-w)`)
+- `.top-header` — 상단 sticky 헤더 (제목 + 데이터 기준일 배지)
+- `.filter-bar` / `.filter-chip` / `.filter-divider` — 인라인 필터 칩 바 (각 페이지 상단)
+- `.page-content` — 탭 콘텐츠 영역 (`.active`로 표시/숨김)
+
+**주요 컴포넌트 클래스:**
+- `.card` / `.card-header` — 카드 컨테이너 + 제목+버튼 가로 배치
 - `.btn-group` + `.btn-toggle` — 뷰모드 버튼 (active 클래스로 상태 표시)
-- `.kpi-unit` / `.kpi-unit-sm` — KPI 카드 단위 텍스트
-- `.scroll-container` — 테이블 스크롤 래퍼 (max-height: 600px)
-- `.rank-scroll` — P3 읍면동 순위 스크롤 (height: 500px)
-- `.hint-text` — 테이블 상단 안내 문구
-- `.map-card` / `.map-wrap` / `.rank-chart-wrap` — P3 지도 레이아웃 컨테이너
+- `.kpi` / `.kpi-label` / `.kpi-value` / `.kpi-unit` / `.kpi-change` — KPI 카드 (4컬럼 그리드)
+- `.sparkline-box` — 스파크라인 캔버스 래퍼
+- `.grid` + `.grid-4`/`.grid-3`/`.grid-2`/`.grid-1`/`.grid-map`/`.grid-21` — 그리드 레이아웃 조합
+- `.chart-wrap` / `.chart-wrap.h400` / `.chart-wrap.rank` — 차트 캔버스 래퍼 (aspect-ratio 기반)
+- `.data-table` / `.compact-table` — 테이블 스타일
+- `.scroll-container` — 테이블 스크롤 래퍼 (max-height: 400px)
+- `.map-card` / `.map-wrap` / `.rank-scroll` / `.rank-chart-wrap` — P3 지도 레이아웃 컨테이너
 - `.map-rgn` — SVG 지도 각 읍면동 path 요소 (`data-name`, `data-rate`, `data-cnt`, `data-pop` 속성 보유)
 - `#map_tooltip` — JS로 동적 생성되는 지도 호버 툴팁 (position:fixed)
+- `.hint` / `.hint-text` — 안내 문구
+- `.mini-kpi` / `.p3-mini-stat` — P3 미니 KPI 요약
+
+**반응형 브레이크포인트:**
+- `≤1200px`: `.grid-4` → 2컬럼, `.grid-map` 1컬럼
+- `≤768px`: 사이드바 숨김, 모든 그리드 1컬럼
 
 ---
 
