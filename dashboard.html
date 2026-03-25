@@ -893,18 +893,18 @@
           <div class="chart-wrap"><canvas id="c5_month"></canvas></div>
         </div>
         <div class="card">
-          <h3>선택 감염병 연도별 추이</h3>
+          <h3 id="c5_trend_title">연도별 추이</h3>
           <div class="chart-wrap"><canvas id="c5_trend"></canvas></div>
         </div>
       </div>
 
       <div class="grid-2">
         <div class="card">
-          <h3>선택 감염병 연령분포</h3>
+          <h3 id="c5_age_title">연령분포</h3>
           <div class="chart-wrap"><canvas id="c5_age_dist"></canvas></div>
         </div>
         <div class="card">
-          <h3>선택 감염병 지역분포 (TOP 10)</h3>
+          <h3 id="c5_region_title">지역분포 (TOP 10)</h3>
           <div class="chart-wrap"><canvas id="c5_region_dist"></canvas></div>
         </div>
       </div>
@@ -1836,12 +1836,12 @@
         let mData = mths.map((_, i) => dOnly.filter(d => d['신고일_yy'] === yr && parseInt(d['신고일_mm']) === (i + 1)).length);
         return { label: name, data: mData, borderColor: diseaseClr, backgroundColor: diseaseClr, tension: 0.3, fill: false };
       });
-      // 월별 차트 제목 업데이트
-      const monthTitle = document.getElementById('c5_month_title');
-      if (monthTitle) {
-        const yearLabel = filterState.year !== '전체' ? filterState.year : targetYears.join('·');
-        monthTitle.textContent = `${name} ${yearLabel}년 월별 신고현황`;
-      }
+      // 차트 제목 업데이트 (선택 감염병명 반영)
+      const c5SetTitle = (id, suffix) => { const el = document.getElementById(id); if (el) el.textContent = `${name} ${suffix}`; };
+      c5SetTitle('c5_month_title', '월별 신고현황');
+      c5SetTitle('c5_trend_title', '연도별 추이');
+      c5SetTitle('c5_age_title', '연령분포');
+      c5SetTitle('c5_region_title', '지역분포 (TOP 10)');
       const monthMax = Math.ceil(Math.max(...c5Datasets.flatMap(ds => ds.data)) * 1.25) || 1;
       initChart('c5_month', {
         type: 'line', data: { labels: mths, datasets: c5Datasets },
