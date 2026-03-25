@@ -736,20 +736,18 @@
           <div class="chart-wrap"><canvas id="c2_yearly"></canvas></div>
         </div>
         <div class="card">
-          <h3>최근 5년 월별 신고건수 추이</h3>
-          <div class="chart-wrap"><canvas id="c2_5y"></canvas></div>
+          <h3>주요 감염병 연간 현황 (TOP 5)</h3>
+          <div class="chart-wrap"><canvas id="c2_top5_line"></canvas></div>
         </div>
       </div>
 
-      <div class="grid grid-1">
+      <div class="grid grid-2">
         <div class="card">
-          <h3>주요 감염병 연간 현황 (TOP 5)</h3>
-          <!-- PDF (Page 6): TOP 3 감염병 표기 (선 그래프) -->
-          <div class="chart-wrap"><canvas id="c2_top5_line"></canvas></div>
+          <h3>최근 5년 월별 신고건수 추이</h3>
+          <div class="chart-wrap"><canvas id="c2_5y"></canvas></div>
         </div>
         <div class="card">
           <h3>최근 5년 연도별 감염병 구성비</h3>
-          <!-- PDF (Page 6): 카바페넴 -> CRE감염증, 100% 누적, 건수 삭제/명칭+%만 -->
           <div class="chart-wrap"><canvas id="c2_5y_comp"></canvas></div>
         </div>
       </div>
@@ -1402,10 +1400,12 @@
         const last5Years = years.slice(-5);
 
         let top5PerYear = {};
+        let yearTotals = {};
         last5Years.forEach(y => {
           let yc = baseData.filter(d => d['신고일_yy'] === y);
+          yearTotals[y] = yc.length;
           let t5 = getTopN(yc, 5);
-          top5PerYear[y] = t5.map(x => ({ name: x[0], rate: parseFloat((x[1] / (yc.length || 1) * 100).toFixed(1)) }));
+          top5PerYear[y] = t5.map(x => ({ name: x[0], cnt: x[1], rate: parseFloat((x[1] / (yc.length || 1) * 100).toFixed(1)) }));
         });
 
         let c2Datasets = [];
@@ -1413,17 +1413,23 @@
         last5Years.forEach((y, yIdx) => {
           let items = top5PerYear[y];
           let top5Sum = items.reduce((a, b) => a + b.rate, 0);
+          let top5Cnt = items.reduce((a, b) => a + b.cnt, 0);
           let othersRate = 100 - top5Sum;
+          let othersCnt = (yearTotals[y] || 0) - top5Cnt;
 
           items.forEach(item => {
             let dataArr = new Array(5).fill(null);
+            let cntArr = new Array(5).fill(null);
             dataArr[yIdx] = item.rate.toFixed(1);
-            c2Datasets.push({ label: item.name, data: dataArr, backgroundColor: window.getGlobalColor(item.name) });
+            cntArr[yIdx] = item.cnt;
+            c2Datasets.push({ label: item.name, data: dataArr, _counts: cntArr, backgroundColor: window.getGlobalColor(item.name) });
           });
 
           let dataArrOther = new Array(5).fill(null);
+          let cntArrOther = new Array(5).fill(null);
           dataArrOther[yIdx] = othersRate.toFixed(1);
-          c2Datasets.push({ label: '그 외', data: dataArrOther, backgroundColor: '#94a3b8' });
+          cntArrOther[yIdx] = othersCnt;
+          c2Datasets.push({ label: '그 외', data: dataArrOther, _counts: cntArrOther, backgroundColor: '#94a3b8' });
         });
 
         initChart('c2_5y_comp', {
@@ -1442,7 +1448,7 @@
                 font: { size: 10, weight: 'bold' },
                 formatter: (v, ctx) => parseFloat(v) > 5 ? ctx.dataset.label + '\n' + v + '%' : ''
               },
-              tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}%` } }
+              tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => { const cnt = ctx.dataset._counts ? ctx.dataset._counts[ctx.dataIndex] : null; return `${ctx.dataset.label}: ${ctx.raw}%` + (cnt != null ? ` (${cnt.toLocaleString()}건)` : ''); } } }
             },
             scales: {
               x: { stacked: true, grid: { display: false } },
