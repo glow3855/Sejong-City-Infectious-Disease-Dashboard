@@ -1980,10 +1980,11 @@
     async function loadData() {
       setRefreshState(true);
       try {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('fetch failed: ' + res.status);
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+        const res = await fetch(url, { cache: 'no-cache' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const csv = await res.text();
+        if (csv.trim().startsWith('<')) throw new Error('SHEET_NOT_PUBLIC');
         rawData = parseCSV(csv);
         rawData.forEach(row => {
           if (row['질병급'] === '#N/A' || row['질병급'] === 'N/A') row['질병급'] = '1';
@@ -1992,7 +1993,11 @@
         initDashboard();
       } catch(e) {
         console.error('Google Sheets 로드 실패:', e);
-        alert('데이터를 불러오지 못했습니다. 잠시 후 새로고침 버튼을 눌러주세요.');
+        if (e.message === 'SHEET_NOT_PUBLIC') {
+          alert('Google Sheets 공유 설정을 확인하세요.\n\n스프레드시트 → 공유 → "링크가 있는 모든 사용자 → 뷰어"로 변경 후 새로고침을 눌러주세요.');
+        } else {
+          alert('데이터를 불러오지 못했습니다.\n\n오류: ' + e.message + '\n\n네트워크 연결을 확인하거나 잠시 후 다시 시도하세요.');
+        }
       } finally {
         setRefreshState(false);
       }
