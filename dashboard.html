@@ -1863,7 +1863,7 @@
       const diseaseClr = window.getGlobalColor(name);
       initChart('c5_trend', {
         type: 'line', data: { labels: years, datasets: [{ label: name + ' 건수', data: trendData, borderColor: diseaseClr, backgroundColor: diseaseClr + '33', fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 8 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: trendMax } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: trendMax } } }
       });
 
       const mths = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
