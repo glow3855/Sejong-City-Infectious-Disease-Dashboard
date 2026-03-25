@@ -1486,7 +1486,7 @@
                 callbacks: { label: (c) => viewState.p3 === 'rate' ? `발생률: ${c.raw}명` : `신고건수: ${c.raw}건` }
               }
             },
-            scales: { x: { grid: { display: false } }, y: { grid: { display: false }, ticks: { autoSkip: false } } }
+            scales: { x: { grid: { display: false }, max: Math.ceil(Math.max(...barData) * 1.25) || 1 }, y: { grid: { display: false }, ticks: { autoSkip: false } } }
           }
         });
 
