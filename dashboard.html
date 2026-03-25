@@ -1325,7 +1325,7 @@
         initChart('c1_top5', {
           type: 'bar',
           data: { labels: top5.map(x => x[0]), datasets: [{ data: top5.map(x => x[1]), backgroundColor: top5.map(x => window.getGlobalColor(x[0])), borderRadius: 4, barThickness: 40 }] },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: '#0f172a', font: { weight: 'bold' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: Math.ceil(top5Max * 1.2) } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: '#0f172a', font: { weight: 'bold' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(top5Max * 1.2) } } }
         });
 
         // For c1_comp, we apply the year filter so the chart matches the dynamically updated year title
@@ -1399,7 +1399,7 @@
                 }
               }
             },
-            scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } }
+            scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true } }
           }
         });
 
@@ -1412,7 +1412,7 @@
         }));
         initChart('c2_5y', {
           type: 'line', data: { labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'], datasets: datasets5y },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => { const yr = c[0].dataset.label; return yr ? `${yr}년 ${c[0].label}` : c[0].label; }, label: (ctx) => `${ctx.dataset.label}년: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => { const yr = c[0].dataset.label; return yr ? `${yr}년 ${c[0].label}` : c[0].label; }, label: (ctx) => `${ctx.dataset.label}년: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true } } }
         });
 
         const top5 = getTopN(baseData, 5).map(x => x[0]);
@@ -1425,7 +1425,7 @@
               return { label: nm, data: counts, borderColor: window.getGlobalColor(nm), borderWidth: 2, pointRadius: 4, tension: 0.3 };
             })
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true } } }
         });
 
         const last5Years = years.slice(-5);
@@ -1483,7 +1483,7 @@
             },
             scales: {
               x: { stacked: true, grid: { display: false } },
-              y: { stacked: true, max: 100, grid: { color: GRID_COLOR }, ticks: { callback: v => v + '%' } }
+              y: { stacked: true, max: 100, grid: { display: false }, ticks: { callback: v => v + '%' } }
             }
           }
         });
@@ -1523,7 +1523,7 @@
                 callbacks: { label: (c) => viewState.p3 === 'rate' ? `발생률: ${c.raw}명 (10만명당)` : `신고건수: ${c.raw}건` }
               }
             },
-            scales: { x: { grid: { display: false }, max: Math.ceil(Math.max(...barData) * 1.25) || 1 }, y: { grid: { display: false }, ticks: { autoSkip: false } } }
+            scales: { x: { grid: { display: false }, suggestedMax: Math.ceil(Math.max(...barData) * 1.25) || 1 }, y: { grid: { display: false }, ticks: { autoSkip: false } } }
           }
         });
 
@@ -1582,7 +1582,7 @@
           const rgnTopMax = Math.max(...rgnTop.map(x => x[1]));
           initChart('c3_top5_disease', {
             type: 'bar', data: { labels: rgnTop.map(x => x[0]), datasets: [{ label: p3SelRegion, data: rgnTop.map(x => x[1]), backgroundColor: rgnTop.map(x => window.getGlobalColor(x[0])), borderRadius: 4 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: Math.ceil(rgnTopMax * 1.2) || 1 } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(rgnTopMax * 1.2) || 1 } } }
           });
         } else {
           if (top5title) top5title.textContent = '주요 읍면동 다빈도 감염병 (TOP 5)';
@@ -1603,7 +1603,7 @@
           const stackMax = Math.ceil(Math.max(...stackTotals) * 1.2) || 1;
           initChart('c3_top5_disease', {
             type: 'bar', data: { labels: top5rgns, datasets },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { clip: true, display: 'auto', color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => v > 0 ? ctx.dataset.label + ' ' + v : '' }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, beginAtZero: true, max: stackMax } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { clip: true, display: 'auto', color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => v > 0 ? ctx.dataset.label + ' ' + v : '' }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { display: false }, beginAtZero: true, suggestedMax: stackMax } } }
           });
         }
 
@@ -1631,7 +1631,7 @@
               { label: curY + '년', data: yoyLabels.map(r => curRgn[r] || 0), backgroundColor: PALETTE[0], borderRadius: 4 },
               { label: prevY + '년', data: yoyLabels.map(r => prevRgn[r] || 0), backgroundColor: '#cbd5e1', borderRadius: 4 }
             ] },
-            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, max: Math.ceil(yoyMax * 1.2) || 1 }, y: { grid: { display: false } } } }
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, suggestedMax: Math.ceil(yoyMax * 1.2) || 1 }, y: { grid: { display: false } } } }
           });
         }
       }
@@ -1693,7 +1693,7 @@
             },
             scales: {
               x: {
-                grid: { color: GRID_COLOR },
+                grid: { display: false },
                 min: -axisLimit, max: axisLimit,
                 ticks: { callback: v => Math.abs(v).toFixed(p4dec) }
               },
@@ -1762,7 +1762,7 @@
                 datalabels: { display: false } }
             ]
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: {}, legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${typeof ctx.raw === 'number' ? ctx.raw.toFixed(1) : ctx.raw}명 (10만명당)` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: Math.ceil(ageRateMax * 1.2) || 1 } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: {}, legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${typeof ctx.raw === 'number' ? ctx.raw.toFixed(1) : ctx.raw}명 (10만명당)` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(ageRateMax * 1.2) || 1 } } }
         });
 
         const lcMap = {
@@ -1794,7 +1794,7 @@
         initChart('c4_lifecycle', {
           type: 'bar',
           data: { labels: lcKeys, datasets: c4LcDatasets },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: (ctx) => { const v = ctx.dataset.data[ctx.dataIndex]; const total = lcTotals[ctx.dataIndex] || 1; return v > 0 && (v / total) >= 0.15; }, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => ctx.dataset.label + ' ' + v }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: GRID_COLOR }, beginAtZero: true, max: lcMax } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: (ctx) => { const v = ctx.dataset.data[ctx.dataIndex]; const total = lcTotals[ctx.dataIndex] || 1; return v > 0 && (v / total) >= 0.15; }, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => ctx.dataset.label + ' ' + v }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { display: false }, beginAtZero: true, suggestedMax: lcMax } } }
         });
       }
 
@@ -1863,7 +1863,7 @@
       const diseaseClr = window.getGlobalColor(name);
       initChart('c5_trend', {
         type: 'line', data: { labels: years, datasets: [{ label: name, data: trendData, borderColor: diseaseClr, backgroundColor: diseaseClr + '33', fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 8 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: trendMax } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: trendMax } } }
       });
 
       const mths = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
@@ -1882,7 +1882,7 @@
       const monthMax = Math.ceil(Math.max(...c5Datasets.flatMap(ds => ds.data)) * 1.25) || 1;
       initChart('c5_month', {
         type: 'line', data: { labels: mths, datasets: c5Datasets },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `${name} ${ctx.label}: ${ctx.raw}건` } } }, scales: { y: { beginAtZero: true, grid: { color: GRID_COLOR }, max: monthMax }, x: { grid: { display: false } } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `${name} ${ctx.label}: ${ctx.raw}건` } } }, scales: { y: { beginAtZero: true, grid: { display: false }, suggestedMax: monthMax }, x: { grid: { display: false } } } }
       });
 
       // c5_age_dist: 연령분포
@@ -1897,7 +1897,7 @@
       const ageMax = Math.ceil(Math.max(...ageCnts) * 1.25) || 1;
       initChart('c5_age_dist', {
         type: 'bar', data: { labels: ageKeys10, datasets: [{ label: name, data: ageCnts, backgroundColor: diseaseColor, borderRadius: 4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: ageMax } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: ageMax } } }
       });
 
       // c5_region_dist: 지역분포 TOP 10
@@ -1911,7 +1911,7 @@
       const regionMax = Math.ceil(Math.max(...regionSorted.map(r => r[1])) * 1.25) || 1;
       initChart('c5_region_dist', {
         type: 'bar', data: { labels: regionSorted.map(r => r[0]), datasets: [{ label: name, data: regionSorted.map(r => r[1]), backgroundColor: diseaseColor, borderRadius: 4 }] },
-        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, max: regionMax }, y: { grid: { display: false } } } }
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, suggestedMax: regionMax }, y: { grid: { display: false } } } }
       });
     };
 
