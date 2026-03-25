@@ -308,7 +308,6 @@
       margin-bottom: 16px;
     }
     .card-header h3 {
-      font-size: 14px;
       font-weight: 600;
       color: var(--text-primary);
     }
@@ -1613,8 +1612,9 @@
           '80세이상': ['80세이상', '80세 이상', '80이상']
         };
         const ageKeys = Object.keys(ageGroup10);
-        let mAge = ageKeys.map(a => filtered.filter(d => d['성별'] === '남자' && ageGroup10[a].some(subA => String(d['연령대5'] || '').replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-').includes(subA.replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-')))).length);
-        let fAge = ageKeys.map(a => filtered.filter(d => d['성별'] === '여자' && ageGroup10[a].some(subA => String(d['연령대5'] || '').replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-').includes(subA.replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-')))).length);
+        const normAge = s => String(s || '').replace(/\s+/g, '').replace(/세/g, '').replace(/[~ㅡ]/g, '-');
+        let mAge = ageKeys.map(a => filtered.filter(d => d['성별'] === '남자' && ageGroup10[a].some(subA => normAge(d['연령대5']) === normAge(subA))).length);
+        let fAge = ageKeys.map(a => filtered.filter(d => d['성별'] === '여자' && ageGroup10[a].some(subA => normAge(d['연령대5']) === normAge(subA))).length);
 
         const mTotal = mAge.reduce((a, b) => a + b, 0);
         const fTotal = fAge.reduce((a, b) => a + b, 0);
@@ -1666,7 +1666,7 @@
         });
 
         // 도넛 (성별 구성비)
-        const genderTotal = mTotal + fTotal;
+        const genderTotal = filtered.length;
         initChart('c4_mini_donut', {
           type: 'doughnut',
           data: { labels: ['남', '여'], datasets: [{ data: [mTotal, fTotal], backgroundColor: ['#0ea5e9', '#ec4899'], borderWidth: 0 }] },
@@ -1738,7 +1738,7 @@
 
         let lcTop3PerGrp = {};
         lcKeys.forEach(grp => {
-          let grpFiltered = filtered.filter(d => lcMap[grp].some(a => String(d['연령대5'] || '').replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-').includes(a.replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-'))));
+          let grpFiltered = filtered.filter(d => lcMap[grp].some(a => normAge(d['연령대5']) === normAge(a)));
           let t3 = getTopN(grpFiltered, 3);
           lcTop3PerGrp[grp] = t3.map(x => x[0]);
         });
@@ -1747,7 +1747,7 @@
         let c4LcDatasets = uniqueLcTop3.map(nm => {
           let counts = lcKeys.map(grp => {
             if (lcTop3PerGrp[grp].includes(nm)) {
-              return filtered.filter(d => processName(d['감염병명']) === nm && lcMap[grp].some(a => String(d['연령대5'] || '').replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-').includes(a.replace(/\s+/g, '').replace('세', '').replace('~', '-').replace('ㅡ', '-')))).length;
+              return filtered.filter(d => processName(d['감염병명']) === nm && lcMap[grp].some(a => normAge(d['연령대5']) === normAge(a))).length;
             } else return 0;
           });
           return { label: nm, data: counts, backgroundColor: window.getGlobalColor(nm) };
@@ -1854,7 +1854,7 @@
       const baseForAge = (window._p5BaseData || gradeBase).filter(d => processName(d['감염병명']) === name);
       const ageCnts = ageKeys10.map(ag => {
         const subs = ageMap10[ag];
-        return baseForAge.filter(d => { const a = (d['연령대5']||'').replace(/\s+/g,'').replace(/세/g,'세').replace(/[~ㅡ]/g,'-'); return subs.some(s => a.includes(s.replace(/\s+/g,''))); }).length;
+        return baseForAge.filter(d => { const a = (d['연령대5']||'').replace(/\s+/g,'').replace(/세/g,'').replace(/[~ㅡ]/g,'-'); return subs.some(s => a === s.replace(/\s+/g,'').replace(/세/g,'').replace(/[~ㅡ]/g,'-')); }).length;
       });
       const diseaseColor = window.getGlobalColor(name);
       const ageMax = Math.ceil(Math.max(...ageCnts) * 1.25) || 1;
