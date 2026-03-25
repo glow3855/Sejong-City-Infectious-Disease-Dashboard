@@ -1666,18 +1666,33 @@
         });
 
         // 도넛 (성별 구성비)
+        const genderTotal = mTotal + fTotal;
         initChart('c4_mini_donut', {
           type: 'doughnut',
           data: { labels: ['남', '여'], datasets: [{ data: [mTotal, fTotal], backgroundColor: ['#0ea5e9', '#ec4899'], borderWidth: 0 }] },
+          plugins: [{
+            id: 'centerText',
+            afterDraw(chart) {
+              const { ctx, chartArea: { left, right, top, bottom } } = chart;
+              const cx = (left + right) / 2, cy = (top + bottom) / 2;
+              ctx.save();
+              ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+              ctx.font = '600 13px Inter, sans-serif'; ctx.fillStyle = '#6B7280';
+              ctx.fillText('총 신고건수', cx, cy - 12);
+              ctx.font = '800 22px Inter, sans-serif'; ctx.fillStyle = '#111827';
+              ctx.fillText(genderTotal.toLocaleString() + '건', cx, cy + 14);
+              ctx.restore();
+            }
+          }],
           options: {
             responsive: true, maintainAspectRatio: false, cutout: '55%',
             plugins: {
               legend: { position: 'bottom' },
               datalabels: {
                 color: '#fff', font: { size: 12, weight: 'bold' },
-                formatter: (value) => { const pct = ((value / (mTotal + fTotal || 1)) * 100).toFixed(0); return value.toLocaleString() + '건\n' + pct + '%'; }
+                formatter: (value) => { const pct = ((value / (genderTotal || 1)) * 100).toFixed(0); return value.toLocaleString() + '건\n' + pct + '%'; }
               },
-              tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw.toLocaleString()}건 (${((ctx.raw / (mTotal + fTotal || 1)) * 100).toFixed(1)}%)` } }
+              tooltip: { callbacks: { label: ctx => { const pct = ((ctx.raw / (genderTotal || 1)) * 100).toFixed(1); const rate = ((ctx.raw / POP_BASE) * 100000).toFixed(1); return `${ctx.label}: ${ctx.raw.toLocaleString()}건 (${pct}%) · ${rate}명/10만명`; } } }
             }
           }
         });
@@ -1714,10 +1729,10 @@
         });
 
         const lcMap = {
-          '영유아(0-9세)': ['0-4세', '5-9세'],
-          '청소년(10-19세)': ['10-14세', '15-19세'],
-          '청장년(20-59세)': ['20-29세', '30-39세', '40-49세', '50-59세'],
-          '노년(60세이상)': ['60-69세', '70-79세', '80세이상']
+          '영유아(0-9세)': ['0-4세', '5-9세', '0-9세'],
+          '청소년(10-19세)': ['10-14세', '15-19세', '10-19세'],
+          '청장년(20-59세)': ['20-24세', '25-29세', '20-29세', '30-34세', '35-39세', '30-39세', '40-44세', '45-49세', '40-49세', '50-54세', '55-59세', '50-59세'],
+          '노년(60세이상)': ['60-64세', '65-69세', '60-69세', '70-74세', '75-79세', '70-79세', '80세이상', '80세 이상']
         };
         const lcKeys = Object.keys(lcMap);
 
