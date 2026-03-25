@@ -7,6 +7,7 @@
   <title>세종시 감염병 현황 대시보드 (프로토타입)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <style>
@@ -15,16 +16,16 @@
        Figma Make 템플릿 기반
        ===================================================== */
     :root {
-      /* 브랜드 */
-      --primary:      #3B82F6;   /* Blue-500 — 주요 강조, 활성 상태 */
-      --primary-dark: #1E40AF;   /* Blue-800 — 사이드바 배경 */
-      --primary-light:#DBEAFE;   /* Blue-100 — 선택 배경 */
-      --accent:       #10B981;   /* Emerald — 긍정 지표 */
+      /* 브랜드 — 세종시 CI 기반 */
+      --primary:      #0072CE;   /* 세종 CI 파랑 — 주요 강조, 활성 상태 */
+      --primary-dark: #004A8D;   /* 세종 CI 진파랑 — 사이드바 배경 */
+      --primary-light:#D6EAFB;   /* 세종 CI 연파랑 — 선택 배경 */
+      --accent:       #00AEEF;   /* 세종 CI 밝은파랑 — 보조 강조 */
 
       /* 배경 계층 */
-      --bg-page:      #F5F5F5;   /* 전체 배경 (연한 뉴트럴 그레이) */
+      --bg-page:      #F5F5F5;   /* 전체 배경 */
       --bg-card:      #FFFFFF;
-      --bg-sidebar:   #111827;   /* Gray-900 — 다크 사이드바 */
+      --bg-sidebar:   #003E74;   /* 세종 CI 네이비 — 다크 사이드바 */
       --bg-hover:     #F9FAFB;   /* Gray-50 */
       --bg-selected:  #EFF6FF;   /* Blue-50 — 크로스필터 선택 */
 
@@ -33,11 +34,11 @@
       --text-secondary: #6B7280;   /* Gray-500 */
       --text-muted:     #9CA3AF;   /* Gray-400 */
       --text-inverse:   #FFFFFF;
-      --text-link:      #3B82F6;
+      --text-link:      #0072CE;
 
       /* 상태 */
       --color-up:     #EF4444;   /* Red-500 — 증가 */
-      --color-down:   #3B82F6;   /* Blue-500 — 감소 */
+      --color-down:   #0072CE;   /* 세종 CI — 감소 */
       --color-success:#10B981;
       --color-warning:#F59E0B;
 
@@ -57,7 +58,7 @@
       --radius-pill: 9999px;
 
       /* 타이포 */
-      --font: 'Inter', 'Pretendard', -apple-system, 'Malgun Gothic', sans-serif;
+      --font: 'Pretendard', 'Inter', -apple-system, 'Malgun Gothic', sans-serif;
 
       /* 레이아웃 */
       --sidebar-w: 240px;
@@ -667,8 +668,9 @@
           <div class="card kpi">
             <div class="kpi-label" id="lbl_k3">당월 신고건수</div>
             <div class="kpi-value" id="val_k3">0<span class="kpi-unit">건</span></div>
-            <div style="display:flex;gap:8px;margin-top:6px;">
+            <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
               <span class="kpi-change down" id="sub_k3_1">— -</span>
+              <span class="kpi-change down" id="sub_k3_2">— -</span>
             </div>
             <div class="sparkline-box"><canvas id="k1_spark"></canvas></div>
           </div>
@@ -683,8 +685,9 @@
           <div class="card kpi">
             <div class="kpi-label" id="lbl_k4">당월 발생률</div>
             <div class="kpi-value" id="val_k4">0.0<span class="kpi-unit">명/10만</span></div>
-            <div style="display:flex;gap:8px;margin-top:6px;">
+            <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
               <span class="kpi-change down" id="sub_k4_1">— -</span>
+              <span class="kpi-change down" id="sub_k4_2">— -</span>
             </div>
             <div class="sparkline-box"><canvas id="k3_spark"></canvas></div>
           </div>
@@ -922,11 +925,11 @@
     Chart.defaults.color = '#6B7280';
     // Figma MCP 연동 시 :root 변수와 함께 아래 색상값도 동기화할 것
     // PALETTE[0] = --primary, PALETTE[1] = --accent
-    const PALETTE = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#E5E7EB'];
+    const PALETTE = ['#0072CE', '#00AEEF', '#C8A951', '#EF4444', '#58595B', '#E5E7EB'];
     // GRID_COLOR = --border-light
     const GRID_COLOR = '#F3F4F6';
 
-    const EXTENDED_PALETTE = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#0EA5E9', '#EC4899', '#14B8A6', '#F43F5E', '#84CC16', '#6366F1', '#F97316', '#06B6D4', '#D946EF', '#3B82F6'];
+    const EXTENDED_PALETTE = ['#0072CE', '#00AEEF', '#C8A951', '#EF4444', '#58595B', '#10B981', '#EC4899', '#14B8A6', '#F59E0B', '#84CC16', '#6366F1', '#F97316', '#06B6D4', '#8B5CF6', '#0072CE'];
     const DISEASE_COLORS = {};
     let extColorIdx = 0;
     window.getGlobalColor = function (name) {
@@ -1305,10 +1308,10 @@
       idHtml('sub_k4_1', `전월대비 ${formatDiff(k4_diff_m, '%')}`);
       idHtml('sub_k4_2', `전년동월대비 ${formatDiff(k4_diff_y, '%')}`);
 
-      createSparkline('k1_spark', k3_labels, k3_spark, '#dc2626', '건');
-      createSparkline('k2_spark', k3_labels, k4_spark, '#2563eb', '명');
-      createSparkline('k3_spark', k3_labels, k4_spark, '#dc2626', '명');
-      createSparkline('k4_spark', k3_labels, k_acc_spark, '#2563eb', '명');
+      createSparkline('k1_spark', k3_labels, k3_spark, '#0072CE', '건');
+      createSparkline('k2_spark', k3_labels, k4_spark, '#0072CE', '명');
+      createSparkline('k3_spark', k3_labels, k4_spark, '#0072CE', '명');
+      createSparkline('k4_spark', k3_labels, k_acc_spark, '#0072CE', '명');
 
       const activeTab = document.querySelector('.tab.active').dataset.target;
 
