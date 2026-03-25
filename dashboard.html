@@ -1412,7 +1412,7 @@
         }));
         initChart('c2_5y', {
           type: 'line', data: { labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'], datasets: datasets5y },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => { const yr = c[0].dataset.label; return yr ? `${yr}년 ${c[0].label}` : c[0].label; }, label: (ctx) => `${ctx.dataset.label}년: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => { const yr = c[0].dataset.label; return yr ? `${yr}년 ${c[0].label}` : c[0].label; }, label: (ctx) => `${ctx.dataset.label}년: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
         });
 
         const top5 = getTopN(baseData, 5).map(x => x[0]);
@@ -1425,7 +1425,7 @@
               return { label: nm, data: counts, borderColor: window.getGlobalColor(nm), borderWidth: 2, pointRadius: 4, tension: 0.3 };
             })
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
         });
 
         const last5Years = years.slice(-5);
