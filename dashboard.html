@@ -982,6 +982,7 @@
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
             색상 팔레트
           </h2>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">사이드바, 헤더, 차트 막대·선·영역 등 대시보드 전체 색상 톤이 변경됩니다.</p>
           <div class="palette-grid">
             <button class="palette-card active" data-palette="sejong">
               <div class="palette-swatches">
@@ -1043,6 +1044,7 @@
             커스텀 팔레트
             <span class="badge-custom">직접 편집</span>
           </h2>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">차트의 막대·선·영역·범례 색상만 개별 지정합니다. 사이드바·헤더 등 UI 색상은 위 팔레트 선택에 따릅니다.</p>
           <div class="custom-palette-row">
             <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="0" value="#0072CE"><span>주색상</span></label>
             <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="1" value="#00AEEF"><span>보조색</span></label>
@@ -1051,7 +1053,10 @@
             <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="4" value="#58595B"><span>중립색</span></label>
             <label class="color-swatch-edit"><input type="color" class="custom-color-input" data-idx="5" value="#E5E7EB"><span>배경색</span></label>
           </div>
-          <button class="btn-apply-custom" id="btn_apply_custom">이 색상으로 적용</button>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-apply-custom" id="btn_apply_custom">이 색상으로 적용</button>
+            <button class="btn-apply-custom" id="btn_reset_custom" style="background:var(--text-muted);">기본값으로 되돌리기</button>
+          </div>
         </div>
 
         <!-- 현재 테마 미리보기 -->
@@ -2414,6 +2419,15 @@
         customPalette = [...document.querySelectorAll('.custom-color-input')].map(inp => inp.value);
         _usingCustom = true;
         applyTheme(currentThemeId, true);
+      }
+
+      // 커스텀 팔레트 기본값 되돌리기
+      if (btn.id === 'btn_reset_custom') {
+        const t = THEMES[currentThemeId] || THEMES['sejong-light'];
+        customPalette = [...t.palette];
+        _usingCustom = false;
+        document.querySelectorAll('.custom-color-input').forEach((inp, i) => { inp.value = customPalette[i] || '#000000'; });
+        applyTheme(currentThemeId, false);
       }
     });
 
