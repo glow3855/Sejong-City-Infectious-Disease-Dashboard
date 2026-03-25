@@ -1762,9 +1762,14 @@
       }
 
       if (activeTab === 'p5') {
-        window._p5BaseData = baseData;
-        const dGrp = baseData.reduce((acc, d) => { const n = processName(d['감염병명']); if (!acc[n]) acc[n] = d['질병급'] + '급'; return acc; }, {});
-        const totalCnt = baseData.length || 1;
+        // P5는 연도+질병급 필터만 사용 (월 필터 미노출) → 연도만 적용
+        const p5Data = baseData.filter(d => {
+          if (f_year !== '전체' && d['신고일_yy'] !== f_year) return false;
+          return true;
+        });
+        window._p5BaseData = p5Data;
+        const dGrp = p5Data.reduce((acc, d) => { const n = processName(d['감염병명']); if (!acc[n]) acc[n] = d['질병급'] + '급'; return acc; }, {});
+        const totalCnt = p5Data.length || 1;
         // 전년대비 계산용
         const curYear = filterState.year !== '전체' ? filterState.year : null;
         const prevYear = curYear ? (parseInt(curYear) - 1).toString() : null;
@@ -1774,7 +1779,7 @@
 
         // 건수 집계
         const dCounts = {};
-        baseData.forEach(d => { const n = processName(d['감염병명']); dCounts[n] = (dCounts[n] || 0) + 1; });
+        p5Data.forEach(d => { const n = processName(d['감염병명']); dCounts[n] = (dCounts[n] || 0) + 1; });
         const dList = Object.keys(dCounts).sort((a, b) => dCounts[b] - dCounts[a]);
 
         // 배지
@@ -1816,9 +1821,11 @@
       const dOnly = gradeBase.filter(d => processName(d['감염병명']) === name);
       const yearGrp = dOnly.reduce((acc, d) => { acc[d['신고일_yy']] = (acc[d['신고일_yy']] || 0) + 1; return acc; }, {});
       const years = Object.keys(yearGrp).sort().slice(-7);
+      const trendData = years.map(y => yearGrp[y] || 0);
+      const trendMax = Math.ceil(Math.max(...trendData) * 1.25) || 1;
       initChart('c5_trend', {
-        type: 'line', data: { labels: years, datasets: [{ label: name + ' 건수', data: years.map(y => yearGrp[y] || 0), borderColor: PALETTE[0], backgroundColor: PALETTE[0] + '33', fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 8 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+        type: 'line', data: { labels: years, datasets: [{ label: name + ' 건수', data: trendData, borderColor: PALETTE[0], backgroundColor: PALETTE[0] + '33', fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: trendMax } } }
       });
 
       const mths = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
@@ -1828,9 +1835,10 @@
         let mData = mths.map((_, i) => dOnly.filter(d => d['신고일_yy'] === yr && parseInt(d['신고일_mm']) === (i + 1)).length);
         return { label: yr + '년', data: mData, borderColor: PALETTE[idx % PALETTE.length], backgroundColor: PALETTE[idx % PALETTE.length], tension: 0.3, fill: false };
       });
+      const monthMax = Math.ceil(Math.max(...c5Datasets.flatMap(ds => ds.data)) * 1.25) || 1;
       initChart('c5_month', {
         type: 'line', data: { labels: mths, datasets: c5Datasets },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label} ${ctx.label}: ${ctx.raw}건` } } }, scales: { y: { beginAtZero: true, grid: { color: GRID_COLOR } }, x: { grid: { display: false } } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label} ${ctx.label}: ${ctx.raw}건` } } }, scales: { y: { beginAtZero: true, grid: { color: GRID_COLOR }, max: monthMax }, x: { grid: { display: false } } } }
       });
 
       // c5_age_dist: 연령분포
@@ -1842,9 +1850,10 @@
         return baseForAge.filter(d => { const a = (d['연령대5']||'').replace(/\s+/g,'').replace(/세/g,'세').replace(/[~ㅡ]/g,'-'); return subs.some(s => a.includes(s.replace(/\s+/g,''))); }).length;
       });
       const diseaseColor = window.getGlobalColor(name);
+      const ageMax = Math.ceil(Math.max(...ageCnts) * 1.25) || 1;
       initChart('c5_age_dist', {
         type: 'bar', data: { labels: ageKeys10, datasets: [{ label: name, data: ageCnts, backgroundColor: diseaseColor, borderRadius: 4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${name}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true, max: ageMax } } }
       });
 
       // c5_region_dist: 지역분포 TOP 10
@@ -1855,9 +1864,10 @@
         if (REGION_POP[e]) regionCnts[e] = (regionCnts[e] || 0) + 1;
       });
       const regionSorted = Object.entries(regionCnts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      const regionMax = Math.ceil(Math.max(...regionSorted.map(r => r[1])) * 1.25) || 1;
       initChart('c5_region_dist', {
         type: 'bar', data: { labels: regionSorted.map(r => r[0]), datasets: [{ label: name, data: regionSorted.map(r => r[1]), backgroundColor: PALETTE[0], borderRadius: 4 }] },
-        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v ? v + '건' : '' }, tooltip: { callbacks: { label: ctx => `${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', color: '#0f172a', font: { size: 11, weight: 700 }, formatter: v => v || '' }, tooltip: { callbacks: { label: ctx => `${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, max: regionMax }, y: { grid: { display: false } } } }
       });
     };
 
