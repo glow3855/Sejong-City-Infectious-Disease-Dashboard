@@ -701,7 +701,7 @@
         <!-- 차트 2열 -->
         <div class="grid grid-2">
         <div class="card">
-          <h3 id="p1_top5_title">2026년 누적 주요 감염병 TOP 5</h3>
+          <h3 id="p1_top5_title">2026년 누적 주요 감염병 (TOP 5)</h3>
           <!-- PDF: 수직/세로형 막대그래프 내림차순. -->
           <div class="chart-wrap"><canvas id="c1_top5"></canvas></div>
         </div>
@@ -812,7 +812,7 @@
 
       <div class="grid-1">
         <div class="card">
-          <h3>읍면별 감염병 발생현황 (월별 Heatmap)</h3>
+          <h3>읍면동별 감염병 발생현황 (월별 Heatmap)</h3>
           <div class="scroll-container">
             <table class="data-table" id="table_heatmap"></table>
           </div>
@@ -1197,7 +1197,7 @@
       const elMain = document.getElementById('p1_main_title');
       if (elMain) elMain.innerText = `주요 발생현황 (${tyLabel}${tmLabel})`;
       const elTop5 = document.getElementById('p1_top5_title');
-      if (elTop5) elTop5.innerText = `${tyLabel} 주요 감염병 TOP 5`;
+      if (elTop5) elTop5.innerText = `${tyLabel} 주요 감염병 (TOP 5)`;
       const elComp = document.getElementById('p1_comp_title');
       if (elComp) elComp.innerText = `${tyLabel} 전국/세종 구성비 비교`;
       const elMapTitle = document.getElementById('c3_map_title');
