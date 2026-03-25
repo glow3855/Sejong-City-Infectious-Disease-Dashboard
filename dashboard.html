@@ -1308,9 +1308,10 @@
 
         let sejongTop5 = getTopN(ycSj, 5);
 
-        let sjData = sejongTop5.map(x => ({ name: x[0], val: parseFloat((x[1] / (ycSj.length || 1) * 100).toFixed(1)) })).sort((a, b) => b.val - a.val);
+        let sjData = sejongTop5.map(x => ({ name: x[0], cnt: x[1], val: parseFloat((x[1] / (ycSj.length || 1) * 100).toFixed(1)) })).sort((a, b) => b.val - a.val);
         let sjOther = 100 - sjData.reduce((a, b) => a + b.val, 0);
-        if (sjOther > 0.05) sjData.push({ name: '그 외', val: sjOther });
+        let sjOtherCnt = ycSj.length - sejongTop5.reduce((a, b) => a + b[1], 0);
+        if (sjOther > 0.05) sjData.push({ name: '그 외', cnt: sjOtherCnt, val: sjOther });
 
         const krYears = Object.keys(KR_COMP_BY_YEAR).sort();
         const krYear = KR_COMP_BY_YEAR[f_year] ? f_year : krYears[krYears.length - 1];
@@ -1322,10 +1323,10 @@
         let c1Datasets = [];
 
         sjData.forEach((item) => {
-          c1Datasets.push({ label: item.name, data: [item.val.toFixed(1), null], backgroundColor: window.getGlobalColor(item.name) });
+          c1Datasets.push({ label: item.name, data: [item.val.toFixed(1), null], _counts: [item.cnt, null], backgroundColor: window.getGlobalColor(item.name) });
         });
         krData.forEach((item) => {
-          c1Datasets.push({ label: item.name, data: [null, item.val.toFixed(1)], backgroundColor: window.getGlobalColor(item.name) });
+          c1Datasets.push({ label: item.name, data: [null, item.val.toFixed(1)], _counts: [null, null], backgroundColor: window.getGlobalColor(item.name) });
         });
 
         initChart('c1_comp', {
@@ -1334,7 +1335,7 @@
           options: {
             indexAxis: 'y',
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false }, datalabels: { color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => parseFloat(v) > 5 ? ctx.dataset.label + '\n' + v + '%' : '' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}%` } } },
+            plugins: { legend: { display: false }, datalabels: { color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => parseFloat(v) > 5 ? ctx.dataset.label + '\n' + v + '%' : '' }, tooltip: { callbacks: { label: (ctx) => { const cnt = ctx.dataset._counts ? ctx.dataset._counts[ctx.dataIndex] : null; return `${ctx.dataset.label}: ${ctx.raw}%` + (cnt != null ? ` (${cnt.toLocaleString()}건)` : ''); } } } },
             scales: { x: { stacked: true, max: 100, display: false }, y: { stacked: true, display: true, grid: { display: false }, border: { display: false } } }
           }
         });
