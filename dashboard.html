@@ -804,7 +804,7 @@
           <div class="chart-wrap h400"><canvas id="c3_top5_disease"></canvas></div>
         </div>
         <div class="card">
-          <h3>읍면동별 전년동기 대비</h3>
+          <h3>읍면동별 전년동기 대비 (TOP 5)</h3>
           <div id="c3_yoy_placeholder" style="display:none;padding:40px;text-align:center;color:#94a3b8;font-size:14px;">연도를 선택하면 전년 대비 현황이 표시됩니다.</div>
           <div class="chart-wrap h400"><canvas id="c3_yoy_bar"></canvas></div>
         </div>
@@ -1624,7 +1624,7 @@
           const prevFiltered = baseData.filter(d => d['신고일_yy'] === prevY && (!curMonth || parseInt(d['신고일_mm']) === curMonth));
           const curRgn = {}; curFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (REGION_POP[e]) curRgn[e] = (curRgn[e] || 0) + 1; });
           const prevRgn = {}; prevFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (REGION_POP[e]) prevRgn[e] = (prevRgn[e] || 0) + 1; });
-          const yoyLabels = Object.keys(curRgn).sort((a, b) => (curRgn[b] || 0) - (curRgn[a] || 0)).slice(0, 10);
+          const yoyLabels = Object.keys(curRgn).sort((a, b) => (curRgn[b] || 0) - (curRgn[a] || 0)).slice(0, 5);
           const yoyMax = Math.max(...yoyLabels.map(r => Math.max(curRgn[r] || 0, prevRgn[r] || 0)));
           initChart('c3_yoy_bar', {
             type: 'bar', data: { labels: yoyLabels, datasets: [
