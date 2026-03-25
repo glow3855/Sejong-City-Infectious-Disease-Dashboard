@@ -1151,7 +1151,7 @@
     const createSparkline = (id, labels, data, color, unit) => {
       initChart(id, {
         type: 'line',
-        data: { labels: labels, datasets: [{ data, borderColor: color, backgroundColor: color + '33', fill: true, borderWidth: 2, tension: 0.3, pointRadius: 4, pointHoverRadius: 6 }] },
+        data: { labels: labels, datasets: [{ data, borderColor: color, backgroundColor: color + '33', fill: true, borderWidth: 2, tension: 0.3, pointRadius: 0, pointHoverRadius: 5 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, tooltip: { enabled: true, callbacks: { title: (c) => formatSparkLabel(c[0].label), label: (c) => `${c.raw}${unit || ''}` } } }, scales: { x: { display: true, grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' } } }, y: { display: false, min: 0 } } }
       });
     };
