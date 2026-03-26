@@ -2385,7 +2385,7 @@
       setRefreshState(true);
       try {
         const infUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
-        const popUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=sj_pop`;
+        const popUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=795824099`;
         const [infRes, popRes] = await Promise.allSettled([
           fetch(infUrl, { cache: 'no-cache' }),
           fetch(popUrl, { cache: 'no-cache' })
