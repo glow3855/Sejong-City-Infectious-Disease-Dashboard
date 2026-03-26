@@ -639,6 +639,12 @@
     /* ===== 설정 페이지 ===== */
     .sidebar-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 8px 12px; }
     .settings-wrap { max-width: 860px; padding: var(--content-padding); display: flex; flex-direction: column; gap: 24px; }
+    .settings-tab-bar { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 0; }
+    .settings-tab { padding: 10px 24px; font-size: 14px; font-weight: 600; color: var(--text-secondary); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: all .15s; }
+    .settings-tab:hover { color: var(--primary); }
+    .settings-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .settings-panel { display: none; }
+    .settings-panel.active { display: flex; flex-direction: column; gap: 24px; }
     .settings-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
     .settings-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
     .badge-custom { font-size: 11px; font-weight: 600; background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: var(--radius-pill); }
@@ -1011,6 +1017,16 @@
     <div class="page-content" id="p6">
       <div class="settings-wrap">
 
+        <!-- 설정 탭 바 -->
+        <div class="settings-tab-bar">
+          <button class="settings-tab active" data-settings-tab="color">색상</button>
+          <button class="settings-tab" data-settings-tab="lang">언어</button>
+          <button class="settings-tab" data-settings-tab="layout">위치 변경</button>
+        </div>
+
+        <!-- ===== 색상 탭 ===== -->
+        <div class="settings-panel active" id="settings-color">
+
         <!-- 모드 -->
         <div class="settings-section">
           <h2 class="settings-title">
@@ -1110,6 +1126,30 @@
         <div class="settings-section">
           <h2 class="settings-title">현재 테마 색상</h2>
           <div class="settings-preview-row" id="settings_preview_row"></div>
+        </div>
+
+        </div><!-- /settings-color -->
+
+        <!-- ===== 언어 탭 ===== -->
+        <div class="settings-panel" id="settings-lang">
+          <div class="settings-section">
+            <h2 class="settings-title">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+              언어 설정
+            </h2>
+            <p style="font-size:13px;color:var(--text-muted);">준비 중입니다. 한국어 / English 전환 기능이 추가될 예정입니다.</p>
+          </div>
+        </div>
+
+        <!-- ===== 위치 변경 탭 ===== -->
+        <div class="settings-panel" id="settings-layout">
+          <div class="settings-section">
+            <h2 class="settings-title">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              대시보드 위치 변경
+            </h2>
+            <p style="font-size:13px;color:var(--text-muted);">준비 중입니다. 각 페이지의 카드를 드래그하여 원하는 위치로 변경할 수 있는 기능이 추가될 예정입니다.</p>
+          </div>
         </div>
 
       </div>
@@ -2530,6 +2570,15 @@
       }
 
       // ── 설정 페이지 ──
+      // 설정 탭 전환
+      if (btn.classList.contains('settings-tab') && btn.dataset.settingsTab) {
+        document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const panel = document.getElementById('settings-' + btn.dataset.settingsTab);
+        if (panel) panel.classList.add('active');
+      }
+
       // 모드 버튼 (라이트/다크)
       if (btn.classList.contains('mode-btn') && btn.dataset.mode) {
         const paletteBase = currentThemeId.replace('-light','').replace('-dark','');
