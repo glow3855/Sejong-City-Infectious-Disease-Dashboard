@@ -2342,9 +2342,9 @@
       POP_DATA.regionByYear = {};
       POP_DATA.ageByYear = {};
       rows.forEach(r => {
-        const year = (r['년도'] || r['연도'] || '').trim();
-        const region = (r['읍면동'] || '').trim();
-        const age = normAgeKey(r['연령대'] || '');
+        const year = (r['yr'] || r['년도'] || r['연도'] || '').trim();
+        const region = (r['emda'] || r['읍면동'] || '').trim();
+        const age = normAgeKey(r['연령대5'] || r['연령대'] || '');
         const pop = parseInt(r['인구수'] || '0') || 0;
         if (!year || !pop) return;
         // 연도별 총인구
@@ -2385,7 +2385,7 @@
       setRefreshState(true);
       try {
         const infUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
-        const popUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent('sj_pop')}`;
+        const popUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=sj_pop`;
         const [infRes, popRes] = await Promise.allSettled([
           fetch(infUrl, { cache: 'no-cache' }),
           fetch(popUrl, { cache: 'no-cache' })
