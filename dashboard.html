@@ -746,7 +746,7 @@
         <div class="filter-divider"></div>
         <div class="filter-chip"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
         <div class="filter-chip"><label>감염병</label><select class="tab-filter" data-key="disease"></select></div>
-        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 인구수 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: 세종시 전체 인구 (<strong>391,122명</strong>, 2025년)</div></span>
+        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 인구수 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: <strong>해당 연도 세종시 인구</strong> (sj_pop 시트 실시간)</div></span>
       </div>
 
       <div style="padding:var(--content-padding);">
@@ -813,7 +813,7 @@
       <div class="filter-bar">
         <div class="filter-chip"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
         <div class="filter-chip"><label>감염병</label><select class="tab-filter" data-key="disease"></select></div>
-        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 인구수 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: 세종시 전체 인구 (<strong>391,122명</strong>, 2025년)</div></span>
+        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 인구수 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: <strong>해당 연도 세종시 인구</strong> (sj_pop 시트 실시간)</div></span>
       </div>
       <div style="padding:var(--content-padding);">
         <div class="page-title-row">
@@ -857,7 +857,7 @@
         <div class="filter-divider"></div>
         <div class="filter-chip"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
         <div class="filter-chip"><label>감염병</label><select class="tab-filter" data-key="disease"></select></div>
-        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 읍면동 인구 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: <strong>읍면동별 해당 연도 인구</strong><br>(연도별 인구 데이터 없으면 최근 연도로 대체)</div></span>
+        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 읍면동 인구 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: <strong>읍면동별 해당 연도 인구</strong> (sj_pop 시트 실시간)<br>(해당 연도 데이터 없으면 최근 연도로 대체)</div></span>
       </div>
       <div style="padding:var(--content-padding);">
         <div class="page-title-row">
@@ -925,7 +925,7 @@
         <div class="filter-divider"></div>
         <div class="filter-chip"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
         <div class="filter-chip"><label>감염병</label><select class="tab-filter" data-key="disease"></select></div>
-        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 연령대 인구 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: <strong>10세 단위 연령대별 인구</strong> (AGE_POP)<br>전국 비교: KR_RATE 기준값 사용</div></span>
+        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 연령대 인구 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: <strong>해당 연도 연령대별 인구</strong> (sj_pop 시트 실시간, 5세→10세 합산)<br>전국 비교: KR_RATE 기준값 사용</div></span>
       </div>
       <div style="padding:var(--content-padding);">
         <div class="page-title-row">
@@ -967,7 +967,7 @@
       <div class="filter-bar">
         <div class="filter-chip"><label>연도</label><select class="tab-filter" data-key="year"></select></div>
         <div class="filter-chip"><label>질병급</label><select class="tab-filter" data-key="grade"></select></div>
-        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 인구수 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: 세종시 전체 인구 (<strong>391,122명</strong>, 2025년)</div></span>
+        <span class="filter-help">?<div class="help-tooltip"><strong>발생률 계산식</strong><div class="formula">신고건수 ÷ 인구수 × 100,000</div>결과 단위: <strong>명 / 인구 10만명당</strong><br>기준 인구: <strong>해당 연도 세종시 인구</strong> (sj_pop 시트 실시간)</div></span>
       </div>
       <div style="padding:var(--content-padding);">
         <div class="page-title-row">
@@ -1303,24 +1303,45 @@
       });
     }
 
-    const POP_BASE = 391122; // 2025년 세종시 전체 인구 (sj_pop 시트 기준)
-    const REGION_POP = {
-      // 2025년 세종시 읍면동별 인구 (sj_pop 시트 기준)
-      '조치원읍': 40818, '소담동': 21577, '다정동': 28186, '보람동': 18755, '새롬동': 26385,
-      '한솔동': 17826, '나성동': 12992, '대평동': 11132, '고운동': 35485, '아름동': 23108,
-      '종촌동': 27590, '도담동': 24568, '해밀동': 21706, '반곡동': 28571, '연서면': 6597,
-      '연동면': 2660, '부강면': 5254, '금남면': 8057, '장군면': 6490, '전의면': 4936, '전동면': 2988,
-      '소정면': 1975, '연기면': 2355, '어진동': 11111
+    // 인구 데이터 — sj_pop 시트에서 실시간 집계 (POP_DATA)
+    let POP_DATA = {
+      totalByYear: {},      // { '2025': 391122, ... }
+      regionByYear: {},     // { '2025': { '조치원읍': 40818, ... }, ... }
+      ageByYear: {},        // { '2025': { '0-4세': 19500, ... }, ... } ← 5세 단위 원본
+      loaded: false
     };
+
+    // 연도별 총인구 조회
+    function getYearPop(year) {
+      const keys = Object.keys(POP_DATA.totalByYear).sort();
+      if (!keys.length) return 1;
+      if (year && year !== '전체' && POP_DATA.totalByYear[year]) return POP_DATA.totalByYear[year];
+      return POP_DATA.totalByYear[keys[keys.length - 1]] || 1;
+    }
+
+    // 5세 단위 연령대 인구 조회
+    function getAgePop(ageGroup5, year) {
+      const normKey = ageGroup5.replace(/\s+/g, '');
+      const keys = Object.keys(POP_DATA.ageByYear).sort();
+      if (!keys.length) return 1;
+      const y = (year && year !== '전체' && POP_DATA.ageByYear[year]) ? year : keys[keys.length - 1];
+      const yData = POP_DATA.ageByYear[y];
+      if (yData && yData[normKey]) return yData[normKey];
+      // 폴백: 가장 최근 연도에서 찾기
+      for (let i = keys.length - 1; i >= 0; i--) {
+        if (POP_DATA.ageByYear[keys[i]] && POP_DATA.ageByYear[keys[i]][normKey]) return POP_DATA.ageByYear[keys[i]][normKey];
+      }
+      return 1;
+    }
+
+    // 읍면동 인구 조회용 지역 목록 (sj_pop 로드 후 최신 연도 기준)
+    function getRegionNames() {
+      const keys = Object.keys(POP_DATA.regionByYear).sort();
+      if (!keys.length) return [];
+      return Object.keys(POP_DATA.regionByYear[keys[keys.length - 1]]);
+    }
     // 법정동 → 행정동 매핑 (rawData의 통계_emdb가 법정동명으로 기록된 경우)
     const EMDB_MAP = { '집현동': '반곡동', '산울동': '해밀동', '가람동': '한솔동' };
-    // 연도별 읍면동 인구 (sj_pop 시트 기준)
-    const REGION_POP_BY_YEAR = {"2012":{"금남면":10400,"부강면":6663,"소정면":2970,"연기면":3125,"연동면":3970,"연서면":7784,"장군면":4910,"전동면":4124,"전의면":6985,"조치원읍":44034,"한솔동":18152},"2013":{"금남면":10293,"부강면":6704,"소정면":2960,"연기면":2973,"연동면":3941,"연서면":7738,"장군면":5099,"전동면":4110,"전의면":6906,"조치원읍":45710,"한솔동":21109},"2014":{"금남면":10027,"도담동":19369,"부강면":6757,"소정면":2943,"연기면":2778,"연동면":3895,"연서면":7684,"장군면":5383,"전동면":4107,"전의면":6788,"조치원읍":47197,"한솔동":22108},"2015":{"금남면":9810,"도담동":33937,"부강면":6723,"소정면":2900,"아름동":32203,"연기면":2642,"연동면":3798,"연서면":7675,"장군면":5638,"전동면":4110,"전의면":6697,"조치원읍":46576,"한솔동":20683},"2016":{"금남면":9747,"도담동":30224,"부강면":6721,"소정면":2874,"아름동":57576,"연기면":2638,"연동면":3664,"연서면":7820,"장군면":6050,"전동면":4066,"전의면":6591,"조치원읍":46300,"종촌동":14804,"한솔동":27764},"2017":{"고운동":13179,"금남면":9557,"도담동":31930,"보람동":13952,"부강면":6626,"새롬동":11645,"소정면":2848,"아름동":37580,"연기면":2749,"연동면":3530,"연서면":7941,"장군면":6323,"전동면":3973,"전의면":6436,"조치원읍":45925,"종촌동":30068,"한솔동":27176},"2018":{"고운동":27587,"금남면":9252,"대평동":3777,"도담동":32370,"보람동":21814,"부강면":6446,"새롬동":34551,"소담동":9109,"소정면":2744,"아름동":24202,"연기면":2729,"연동면":3365,"연서면":7833,"장군면":6250,"전동면":3856,"전의면":6215,"조치원읍":44922,"종촌동":30231,"한솔동":19702},"2019":{"고운동":31084,"금남면":8940,"대평동":9075,"도담동":32060,"보람동":17382,"부강면":6348,"새롬동":49640,"소담동":23856,"소정면":2600,"아름동":23781,"연기면":2629,"연동면":3232,"연서면":7626,"장군면":6190,"전동면":3771,"전의면":5969,"조치원읍":43846,"종촌동":29857,"한솔동":19318},"2020":{"고운동":33893,"금남면":8804,"다정동":13655,"대평동":10769,"도담동":35698,"보람동":19216,"부강면":6268,"새롬동":41447,"소담동":30947,"소정면":2485,"아름동":23568,"연기면":2644,"연동면":3165,"연서면":7490,"장군면":6462,"전동면":3660,"전의면":5767,"조치원읍":43175,"종촌동":29662,"한솔동":19250},"2021":{"고운동":34294,"금남면":8912,"다정동":27833,"대평동":11135,"도담동":36404,"반곡동":8786,"보람동":19201,"부강면":6190,"새롬동":33797,"소담동":26405,"소정면":2347,"아름동":23447,"연기면":2762,"연동면":3126,"연서면":7421,"장군면":6839,"전동면":3464,"전의면":5594,"조치원읍":43169,"종촌동":29345,"한솔동":18917,"해밀동":4278},"2022":{"고운동":34630,"금남면":8819,"다정동":28407,"대평동":11274,"도담동":34614,"반곡동":21765,"보람동":18985,"부강면":6006,"새롬동":38937,"소담동":20920,"소정면":2233,"아름동":23411,"연기면":2725,"연동면":3031,"연서면":7287,"장군면":6934,"전동면":3311,"전의면":5494,"조치원읍":42778,"종촌동":28859,"한솔동":18481,"해밀동":8655},"2023":{"고운동":35662,"금남면":8532,"나성동":6582,"다정동":28565,"대평동":11261,"도담동":30608,"반곡동":27256,"보람동":18992,"부강면":5740,"새롬동":33162,"소담동":21675,"소정면":2179,"아름동":23540,"어진동":5598,"연기면":2556,"연동면":2893,"연서면":7055,"장군면":6761,"전동면":3205,"전의면":5380,"조치원읍":41719,"종촌동":28493,"한솔동":18330,"해밀동":9108},"2024":{"고운동":35908,"금남면":8261,"나성동":13091,"다정동":28465,"대평동":11267,"도담동":24977,"반곡동":28586,"보람동":18892,"부강면":5461,"새롬동":26544,"소담동":21768,"소정면":2092,"아름동":23413,"어진동":11156,"연기면":2420,"연동면":2758,"연서면":6796,"장군면":6577,"전동면":3089,"전의면":5161,"조치원읍":40993,"종촌동":28053,"한솔동":18131,"해밀동":14545},"2025":{"고운동":35485,"금남면":8057,"나성동":12992,"다정동":28186,"대평동":11132,"도담동":24568,"반곡동":28571,"보람동":18755,"부강면":5254,"새롬동":26385,"소담동":21577,"소정면":1975,"아름동":23108,"어진동":11111,"연기면":2355,"연동면":2660,"연서면":6597,"장군면":6490,"전동면":2988,"전의면":4936,"조치원읍":40818,"종촌동":27590,"한솔동":17826,"해밀동":21706},"2026":{"고운동":35322,"금남면":7963,"나성동":12957,"다정동":28082,"대평동":11020,"도담동":24350,"반곡동":28594,"보람동":18748,"부강면":5172,"새롬동":26330,"소담동":21524,"소정면":1911,"아름동":22933,"어진동":11093,"연기면":2364,"연동면":2625,"연서면":6474,"장군면":6444,"전동면":2952,"전의면":4802,"조치원읍":40710,"종촌동":27437,"한솔동":17688,"해밀동":23982}};
-    const AGE_POP = {
-      '0-4세': 20000, '5-9세': 22000, '10-14세': 23000, '15-19세': 20000,
-      '20-29세': 35000, '30-39세': 65000, '40-49세': 70000, '50-59세': 50000,
-      '60-69세': 40000, '70-79세': 20000, '80세이상': 15000
-    };
     const KR_COMP_BY_YEAR = {
       "2001": { "홍역": 71.6, "쯔쯔가무시증": 8.2, "말라리아": 7.9, "유행성이하선염": 5.2, "세균성이질": 2.9 },
       "2002": { "쯔쯔가무시증": 28.9, "말라리아": 27.1, "세균성이질": 11.6, "유행성이하선염": 11.5, "파라티푸스": 6.2 },
@@ -1606,8 +1627,8 @@
       const k1_prev = getAccCount(py);
       const k1_diff = k1_val - k1_prev;
 
-      const k2_val = ((k1_val / POP_BASE) * 100000).toFixed(1);
-      const k2_prev = ((k1_prev / POP_BASE) * 100000).toFixed(1);
+      const k2_val = ((k1_val / getYearPop(ty)) * 100000).toFixed(1);
+      const k2_prev = ((k1_prev / getYearPop(py)) * 100000).toFixed(1);
       const k2_diff = (k2_val - k2_prev).toFixed(1);
 
       const k3_val = getMonthCount(ty, tm);
@@ -1616,22 +1637,24 @@
       const k3_prev_y = getMonthCount(py, tm);
       const k3_diff_y = k3_val - k3_prev_y;
 
-      const k4_val = ((k3_val / POP_BASE) * 100000).toFixed(1);
-      const k4_prev_m = ((k3_prev_m / POP_BASE) * 100000).toFixed(1);
+      const k4_val = ((k3_val / getYearPop(ty)) * 100000).toFixed(1);
+      const k4_prev_m = ((k3_prev_m / getYearPop(pm_y)) * 100000).toFixed(1);
       const k4_diff_m = (k4_val - k4_prev_m).toFixed(1);
-      const k4_prev_y = ((k3_prev_y / POP_BASE) * 100000).toFixed(1);
+      const k4_prev_y = ((k3_prev_y / getYearPop(py)) * 100000).toFixed(1);
       const k4_diff_y = (k4_val - k4_prev_y).toFixed(1);
 
       let k3_labels = [];
       let k3_spark = [];
+      let k3_sparkYears = [];
       for (let i = 5; i >= 0; i--) {
         let cM = parseInt(tm) - i;
         let cY = parseInt(ty);
         while (cM <= 0) { cM += 12; cY -= 1; }
         k3_spark.push(getMonthCount(cY.toString(), cM.toString()));
+        k3_sparkYears.push(cY.toString());
         k3_labels.push(`${cY.toString().slice(-2)}.${cM.toString().padStart(2, '0')}`);
       }
-      let k4_spark = k3_spark.map(v => ((v / POP_BASE) * 100000).toFixed(1));
+      let k4_spark = k3_spark.map((v, i) => ((v / getYearPop(k3_sparkYears[i])) * 100000).toFixed(1));
 
       // 누적 발생률 스파크라인용 — 각 월 시점까지의 해당 연도 누적 발생률
       let k_acc_spark = [];
@@ -1640,7 +1663,7 @@
         let cY = parseInt(ty);
         while (cM <= 0) { cM += 12; cY -= 1; }
         const accCnt = baseData.filter(d => d['신고일_yy'] === cY.toString() && parseInt(d['신고일_mm']) <= cM).length;
-        k_acc_spark.push(((accCnt / POP_BASE) * 100000).toFixed(1));
+        k_acc_spark.push(((accCnt / getYearPop(cY.toString())) * 100000).toFixed(1));
       }
 
       const formatDiff = (d, unit) => {
@@ -1691,7 +1714,7 @@
         initChart('c1_top5', {
           type: 'bar',
           data: { labels: top5.map(x => x[0]), datasets: [{ data: top5.map(x => x[1]), backgroundColor: top5.map(x => window.getGlobalColor(x[0])), borderRadius: 4, barThickness: 40 }] },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: CHART_LABEL_COLOR, font: { weight: 'bold' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(top5Max * 1.2) } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { align: 'end', anchor: 'end', color: CHART_LABEL_COLOR, font: { weight: 'bold' } }, tooltip: { callbacks: { label: (ctx) => { const pop = getYearPop(ty); const rate = ((ctx.raw / pop) * 100000).toFixed(1); return [`발생률: ${rate}명 (10만명당)`, `신고건수: ${ctx.raw.toLocaleString()}건`, `인구수: ${pop.toLocaleString()}명`]; } } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(top5Max * 1.2) } } }
         });
 
         // For c1_comp, we apply the year filter so the chart matches the dynamically updated year title
@@ -1742,7 +1765,7 @@
         const yearGrp = baseData.reduce((acc, d) => { acc[d['신고일_yy']] = (acc[d['신고일_yy']] || 0) + 1; return acc; }, {});
         const years = Object.keys(yearGrp).sort();
         const c2_cntData = years.map(y => yearGrp[y] || 0);
-        const c2_rateData = years.map(y => (((yearGrp[y] || 0) / POP_BASE) * 100000).toFixed(1));
+        const c2_rateData = years.map(y => (((yearGrp[y] || 0) / getYearPop(y)) * 100000).toFixed(1));
 
         initChart('c2_yearly', {
           type: 'line',
@@ -1761,7 +1784,7 @@
               tooltip: {
                 callbacks: {
                   title: (c) => `${c[0].label}년`,
-                  label: (ctx) => viewState.c2 === 'cnt' ? `세종 건수: ${ctx.raw}건` : `발생률: ${ctx.raw}명 (10만명당)`
+                  label: (ctx) => { const y = ctx.label; const cnt = yearGrp[y] || 0; const pop = getYearPop(y); const rate = ((cnt / pop) * 100000).toFixed(1); return [`발생률: ${rate}명 (10만명당)`, `신고건수: ${cnt.toLocaleString()}건`, `인구수: ${pop.toLocaleString()}명`]; }
                 }
               }
             },
@@ -1778,7 +1801,7 @@
         }));
         initChart('c2_5y', {
           type: 'line', data: { labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'], datasets: datasets5y },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => { const yr = c[0].dataset.label; return yr ? `${yr}년 ${c[0].label}` : c[0].label; }, label: (ctx) => `${ctx.dataset.label}년: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => { const yr = c[0].dataset.label; return yr ? `${yr}년 ${c[0].label}` : c[0].label; }, label: (ctx) => { const yr = ctx.dataset.label; const pop = getYearPop(yr); const rate = ((ctx.raw / pop) * 100000).toFixed(1); return [`발생률: ${rate}명 (10만명당)`, `신고건수: ${ctx.raw.toLocaleString()}건`, `인구수: ${pop.toLocaleString()}명`]; } } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true } } }
         });
 
         const top5 = getTopN(baseData, 5).map(x => x[0]);
@@ -1791,7 +1814,7 @@
               return { label: nm, data: counts, borderColor: window.getGlobalColor(nm), borderWidth: 2, pointRadius: 4, tension: 0.3 };
             })
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true, pointStyle: 'rectRounded' } }, datalabels: { display: false }, tooltip: { callbacks: { title: (c) => `${c[0].label}년`, label: (ctx) => { const yr = ctx.label; const pop = getYearPop(yr); const rate = ((ctx.raw / pop) * 100000).toFixed(1); return [`${ctx.dataset.label}: ${ctx.raw}건`, `발생률: ${rate}명 (10만명당)`, `인구수: ${pop.toLocaleString()}명`]; } } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true } } }
         });
 
         const last5Years = years.slice(-5);
@@ -1858,15 +1881,18 @@
 
       if (activeTab === 'p3') {
         const emdbGrp = filtered.reduce((acc, d) => { const raw = d['통계_emdb'] || '기타'; const e = EMDB_MAP[raw] || raw; acc[e] = (acc[e] || 0) + 1; return acc; }, {});
-        const regionNames = Object.keys(REGION_POP);
+        const regionNames = getRegionNames();
 
         // 연도 필터에 맞는 읍면동 인구 조회 (없으면 가장 최근 연도 값 사용)
-        const p3Year = filterState.year !== '전체' ? filterState.year : Object.keys(REGION_POP_BY_YEAR).sort().reverse()[0];
+        const rpKeys = Object.keys(POP_DATA.regionByYear).sort();
+        const p3Year = filterState.year !== '전체' ? filterState.year : (rpKeys.length ? rpKeys[rpKeys.length - 1] : '2026');
         const getP3Pop = r => {
-          const yp = REGION_POP_BY_YEAR[p3Year];
+          const yp = POP_DATA.regionByYear[p3Year];
           if (yp && yp[r]) return yp[r];
-          const fallbackYear = Object.keys(REGION_POP_BY_YEAR).sort().reverse().find(y => REGION_POP_BY_YEAR[y][r]);
-          return fallbackYear ? REGION_POP_BY_YEAR[fallbackYear][r] : (REGION_POP[r] || 1);
+          for (let i = rpKeys.length - 1; i >= 0; i--) {
+            if (POP_DATA.regionByYear[rpKeys[i]] && POP_DATA.regionByYear[rpKeys[i]][r]) return POP_DATA.regionByYear[rpKeys[i]][r];
+          }
+          return 1;
         };
 
         const sortedE = regionNames.slice().sort((a, b) => {
@@ -1886,7 +1912,7 @@
               legend: { display: false },
               datalabels: { align: 'end', anchor: 'end', color: CHART_LABEL_COLOR },
               tooltip: {
-                callbacks: { label: (c) => viewState.p3 === 'rate' ? `발생률: ${c.raw}명 (10만명당)` : `신고건수: ${c.raw}건` }
+                callbacks: { label: (c) => { const region = c.label; const cnt = emdbGrp[region] || 0; const pop = getP3Pop(region); const rate = ((cnt / pop) * 100000).toFixed(1); return [`발생률: ${rate}명 (10만명당)`, `신고건수: ${cnt.toLocaleString()}건`, `인구수: ${pop.toLocaleString()}명`]; } }
               }
             },
             scales: { x: { grid: { display: false }, suggestedMax: Math.ceil(Math.max(...barData) * 1.25) || 1 }, y: { grid: { display: false }, ticks: { autoSkip: false } } }
@@ -1911,7 +1937,7 @@
         // Heatmap logic kept identical
         const p3_data = filterState.year !== '전체' ? baseData.filter(d => d['신고일_yy'] === filterState.year) : baseData;
         const mths = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-        const hmSortedE = Object.keys(emdbGrp).filter(e => REGION_POP[e]).sort((a, b) => emdbGrp[b] - emdbGrp[a]);
+        const hmSortedE = Object.keys(emdbGrp).filter(e => regionNames.includes(e)).sort((a, b) => emdbGrp[b] - emdbGrp[a]);
         let ht = '<thead><tr><th>읍면동</th>'; mths.forEach(m => ht += `<th>${m}</th>`); ht += '<th>합계</th></tr></thead><tbody>';
         hmSortedE.forEach(r => {
           ht += `<tr><td style="font-weight:700;">${r}</td>`;
@@ -1930,8 +1956,8 @@
         document.getElementById('table_heatmap').innerHTML = ht;
 
         // P3 KPI 패널 업데이트
-        const regionsWithCases = Object.keys(emdbGrp).filter(e => REGION_POP[e] && emdbGrp[e] > 0).length;
-        const totalP3 = filtered.filter(d => { const raw = d['통계_emdb'] || '기타'; const e = EMDB_MAP[raw] || raw; return REGION_POP[e]; }).length;
+        const regionsWithCases = Object.keys(emdbGrp).filter(e => regionNames.includes(e) && emdbGrp[e] > 0).length;
+        const totalP3 = filtered.filter(d => { const raw = d['통계_emdb'] || '기타'; const e = EMDB_MAP[raw] || raw; return regionNames.includes(e); }).length;
         const allRates = regionNames.map(r => ((emdbGrp[r] || 0) / getP3Pop(r)) * 100000);
         const avgRate = regionsWithCases > 0 ? (allRates.reduce((a, b) => a + b, 0) / regionNames.length).toFixed(1) : '0';
         if (document.getElementById('p3_kpi_regions')) document.getElementById('p3_kpi_regions').textContent = regionsWithCases + '개';
@@ -1988,8 +2014,8 @@
           const curMonth = filterState.month !== '전체' ? parseInt(filterState.month.replace('월', '')) : null;
           const curFiltered = baseData.filter(d => d['신고일_yy'] === curY && (!curMonth || parseInt(d['신고일_mm']) === curMonth));
           const prevFiltered = baseData.filter(d => d['신고일_yy'] === prevY && (!curMonth || parseInt(d['신고일_mm']) === curMonth));
-          const curRgn = {}; curFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (REGION_POP[e]) curRgn[e] = (curRgn[e] || 0) + 1; });
-          const prevRgn = {}; prevFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (REGION_POP[e]) prevRgn[e] = (prevRgn[e] || 0) + 1; });
+          const curRgn = {}; curFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (regionNames.includes(e)) curRgn[e] = (curRgn[e] || 0) + 1; });
+          const prevRgn = {}; prevFiltered.forEach(d => { const e = EMDB_MAP[d['통계_emdb']] || d['통계_emdb'] || '기타'; if (regionNames.includes(e)) prevRgn[e] = (prevRgn[e] || 0) + 1; });
           const yoyLabels = Object.keys(curRgn).sort((a, b) => (curRgn[b] || 0) - (curRgn[a] || 0)).slice(0, 5);
           const yoyMax = Math.max(...yoyLabels.map(r => Math.max(curRgn[r] || 0, prevRgn[r] || 0)));
           initChart('c3_yoy_bar', {
@@ -1997,7 +2023,7 @@
               { label: curY + '년', data: yoyLabels.map(r => curRgn[r] || 0), backgroundColor: PALETTE[0], borderRadius: 4 },
               { label: prevY + '년', data: yoyLabels.map(r => prevRgn[r] || 0), backgroundColor: '#cbd5e1', borderRadius: 4 }
             ] },
-            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { grid: { display: false }, suggestedMax: Math.ceil(yoyMax * 1.2) || 1 }, y: { grid: { display: false } } } }
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: false }, tooltip: { callbacks: { label: ctx => { const region = ctx.label; const pop = getP3Pop(region); const rate = ((ctx.raw / pop) * 100000).toFixed(1); return [`${ctx.dataset.label}: ${ctx.raw}건`, `발생률: ${rate}명 (10만명당)`, `인구수: ${pop.toLocaleString()}명`]; } } }, scales: { x: { grid: { display: false }, suggestedMax: Math.ceil(yoyMax * 1.2) || 1 }, y: { grid: { display: false } } } }
           });
         }
       }
@@ -2026,14 +2052,17 @@
         let displayF = fAge;
         let unit = '건';
 
+        // 10세 그룹의 5세 서브그룹만 추출하여 인구 합산 (중복 방지: 10세 키 '0-9세' 등 제외)
+        const AGE_5Y_KEYS = ['0-4세','5-9세','10-14세','15-19세','20-24세','25-29세','30-34세','35-39세','40-44세','45-49세','50-54세','55-59세','60-64세','65-69세','70-74세','75-79세','80세이상'];
+        const getAgeGroupPop = (a) => ageGroup10[a].filter(s => AGE_5Y_KEYS.includes(s)).reduce((sum, sub) => sum + getAgePop(sub, filterState.year), 0);
         if (viewState.p4 === 'rate') {
           unit = '명';
           displayM = ageKeys.map((a, i) => {
-            let pop = ageGroup10[a].reduce((sum, sub) => sum + (AGE_POP[sub] || 0), 0);
+            let pop = getAgeGroupPop(a);
             return -(((mAge[i]) / (pop || 1)) * 100000);
           });
           displayF = ageKeys.map((a, i) => {
-            let pop = ageGroup10[a].reduce((sum, sub) => sum + (AGE_POP[sub] || 0), 0);
+            let pop = getAgeGroupPop(a);
             return (((fAge[i]) / (pop || 1)) * 100000);
           });
         }
@@ -2055,7 +2084,7 @@
             plugins: {
               legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
               datalabels: { color: CHART_LABEL_COLOR, font: { size: 11, weight: 600 } },
-              tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.abs(c.raw).toFixed(p4dec)}${unit}${viewState.p4 === 'rate' ? ' (10만명당)' : ''}` } }
+              tooltip: { callbacks: { label: c => { const ageKey = ageKeys[c.dataIndex]; const cnt = c.dataset.label === '남자' ? mAge[c.dataIndex] : fAge[c.dataIndex]; const pop = getAgeGroupPop(ageKey); const rate = ((cnt / (pop || 1)) * 100000).toFixed(1); return [`발생률: ${rate}명 (10만명당)`, `신고건수: ${cnt.toLocaleString()}건`, `인구수: ${pop.toLocaleString()}명`]; } } }
             },
             scales: {
               x: {
@@ -2095,14 +2124,14 @@
                 color: '#fff', font: { size: 12, weight: 'bold' },
                 formatter: (value) => { const pct = ((value / (genderTotal || 1)) * 100).toFixed(0); return value.toLocaleString() + '건\n' + pct + '%'; }
               },
-              tooltip: { callbacks: { label: ctx => { const pct = ((ctx.raw / (genderTotal || 1)) * 100).toFixed(1); const rate = ((ctx.raw / POP_BASE) * 100000).toFixed(1); return `${ctx.label}: ${ctx.raw.toLocaleString()}건 (${pct}%) · ${rate}명/10만명`; } } }
+              tooltip: { callbacks: { label: ctx => { const pct = ((ctx.raw / (genderTotal || 1)) * 100).toFixed(1); const pop = getYearPop(filterState.year); const rate = ((ctx.raw / pop) * 100000).toFixed(1); return [`${ctx.label}: ${ctx.raw.toLocaleString()}건 (${pct}%)`, `발생률: ${rate}명 (10만명당)`, `인구수: ${pop.toLocaleString()}명`]; } } }
             }
           }
         });
 
         // 연령대별 발생률 전국 비교
         const rates = ageKeys.map((a, i) => {
-          let pop = ageGroup10[a].reduce((sum, sub) => sum + (AGE_POP[sub] || 0), 0);
+          let pop = getAgeGroupPop(a);
           return parseFloat((((mAge[i] + fAge[i]) / (pop || 1)) * 100000).toFixed(1));
         });
         // KR_RATE 10세 단위 변환
@@ -2128,7 +2157,7 @@
                 datalabels: { display: false } }
             ]
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: {}, legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${typeof ctx.raw === 'number' ? ctx.raw.toFixed(1) : ctx.raw}명 (10만명당)` } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(ageRateMax * 1.2) || 1 } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: {}, legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, tooltip: { callbacks: { label: ctx => { const ageKey = ageKeys[ctx.dataIndex]; const cnt = mAge[ctx.dataIndex] + fAge[ctx.dataIndex]; const pop = getAgeGroupPop(ageKey); const rate = typeof ctx.raw === 'number' ? ctx.raw.toFixed(1) : ctx.raw; return [`${ctx.dataset.label}: ${rate}명 (10만명당)`, `신고건수: ${cnt.toLocaleString()}건`, `인구수: ${pop.toLocaleString()}명`]; } } } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, beginAtZero: true, suggestedMax: Math.ceil(ageRateMax * 1.2) || 1 } } }
         });
 
         const lcMap = {
@@ -2160,7 +2189,7 @@
         initChart('c4_lifecycle', {
           type: 'bar',
           data: { labels: lcKeys, datasets: c4LcDatasets },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: (ctx) => { const v = ctx.dataset.data[ctx.dataIndex]; const total = lcTotals[ctx.dataIndex] || 1; return v > 0 && (v / total) >= 0.15; }, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => ctx.dataset.label + ' ' + v }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}건` } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { display: false }, beginAtZero: true, suggestedMax: lcMax } } }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, datalabels: { display: (ctx) => { const v = ctx.dataset.data[ctx.dataIndex]; const total = lcTotals[ctx.dataIndex] || 1; return v > 0 && (v / total) >= 0.15; }, color: '#fff', font: { size: 10, weight: 'bold' }, formatter: (v, ctx) => ctx.dataset.label + ' ' + v }, tooltip: { callbacks: { label: (ctx) => { const grp = lcKeys[ctx.dataIndex]; const lcPop = lcMap[grp].filter(s => AGE_5Y_KEYS.includes(s)).reduce((sum, sub) => sum + getAgePop(sub, filterState.year), 0); const rate = ((ctx.raw / (lcPop || 1)) * 100000).toFixed(1); return [`${ctx.dataset.label}: ${ctx.raw}건`, `발생률: ${rate}명 (10만명당)`, `인구수: ${lcPop.toLocaleString()}명`]; } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { display: false }, beginAtZero: true, suggestedMax: lcMax } } }
         });
       }
 
@@ -2271,7 +2300,7 @@
       baseForAge.forEach(d => {
         const raw = d['통계_emdb'] || '기타';
         const e = EMDB_MAP[raw] || raw;
-        if (REGION_POP[e]) regionCnts[e] = (regionCnts[e] || 0) + 1;
+        if (getRegionNames().includes(e)) regionCnts[e] = (regionCnts[e] || 0) + 1;
       });
       const regionSorted = Object.entries(regionCnts).sort((a, b) => b[1] - a[1]).slice(0, 10);
       const regionMax = Math.ceil(Math.max(...regionSorted.map(r => r[1])) * 1.25) || 1;
@@ -2288,7 +2317,7 @@
 
     let rawData = [];
 
-    function parseCSV(text) {
+    function parseCSV(text, filterFn) {
       const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim().split('\n');
       const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
       return lines.slice(1).filter(l => l.trim()).map(line => {
@@ -2303,7 +2332,34 @@
         const obj = {};
         headers.forEach((h, i) => { obj[h] = (vals[i] || '').replace(/^"|"$/g, '').trim(); });
         return obj;
-      }).filter(r => r['감염병명']);
+      }).filter(filterFn || (r => r['감염병명']));
+    }
+
+    function aggregatePopData(rows) {
+      const normAgeKey = s => String(s || '').replace(/\s+/g, '');
+      POP_DATA.totalByYear = {};
+      POP_DATA.regionByYear = {};
+      POP_DATA.ageByYear = {};
+      rows.forEach(r => {
+        const year = (r['년도'] || r['연도'] || '').trim();
+        const region = (r['읍면동'] || '').trim();
+        const age = normAgeKey(r['연령대'] || '');
+        const pop = parseInt(r['인구수'] || '0') || 0;
+        if (!year || !pop) return;
+        // 연도별 총인구
+        POP_DATA.totalByYear[year] = (POP_DATA.totalByYear[year] || 0) + pop;
+        // 읍면동별
+        if (region) {
+          if (!POP_DATA.regionByYear[year]) POP_DATA.regionByYear[year] = {};
+          POP_DATA.regionByYear[year][region] = (POP_DATA.regionByYear[year][region] || 0) + pop;
+        }
+        // 연령대별 (5세 단위 원본)
+        if (age) {
+          if (!POP_DATA.ageByYear[year]) POP_DATA.ageByYear[year] = {};
+          POP_DATA.ageByYear[year][age] = (POP_DATA.ageByYear[year][age] || 0) + pop;
+        }
+      });
+      POP_DATA.loaded = true;
     }
 
     function updateDateBadge() {
@@ -2327,15 +2383,28 @@
     async function loadData() {
       setRefreshState(true);
       try {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
-        const res = await fetch(url, { cache: 'no-cache' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const csv = await res.text();
-        if (csv.trim().startsWith('<')) throw new Error('SHEET_NOT_PUBLIC');
-        rawData = parseCSV(csv);
+        const infUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+        const popUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent('sj_pop')}`;
+        const [infRes, popRes] = await Promise.allSettled([
+          fetch(infUrl, { cache: 'no-cache' }),
+          fetch(popUrl, { cache: 'no-cache' })
+        ]);
+        // inf_disease (필수)
+        if (infRes.status === 'rejected' || !infRes.value.ok) throw new Error('inf_disease 시트 로드 실패');
+        const infCsv = await infRes.value.text();
+        if (infCsv.trim().startsWith('<')) throw new Error('SHEET_NOT_PUBLIC');
+        rawData = parseCSV(infCsv);
         rawData.forEach(row => {
           if (row['질병급'] === '#N/A' || row['질병급'] === 'N/A') row['질병급'] = '1';
         });
+        // sj_pop (필수)
+        if (popRes.status === 'rejected' || !popRes.value.ok) throw new Error('sj_pop 시트 로드 실패');
+        const popCsv = await popRes.value.text();
+        if (popCsv.trim().startsWith('<')) throw new Error('sj_pop 시트 공유 설정을 확인하세요');
+        const popRows = parseCSV(popCsv, r => r['인구수']);
+        aggregatePopData(popRows);
+        console.log('POP_DATA 로드 완료:', { 연도수: Object.keys(POP_DATA.totalByYear).length, 최신연도: Object.keys(POP_DATA.totalByYear).sort().pop() });
+
         updateDateBadge();
         initDashboard();
       } catch(e) {
